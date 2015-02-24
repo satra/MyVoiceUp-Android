@@ -1,0 +1,52 @@
+{
+    "id": "testios",
+    "author": "MIT Voice and Depression study team",
+    "sink": {
+        "type": "DataHub",
+        "url": "http://localhost:8000",
+        "repo": "MyVoiceUp",
+        "shareWith": "gicmo"
+    },
+    "questions": [{"question_id": "audio1",
+                   "question_type": "audio_recording",
+                   "question_text": "Sample audio recording test"},
+                   {"question_id": "range1",
+                   "question_type": "range",
+                   "question_text": "Slider Question",
+                   "range_min": 10,
+                   "range_max": 20,
+                   "range_step": 1
+                   },
+                   {"question_id": "imagechoice1",
+                   "question_type": "image_choices",
+                   "question_text": "How is your energy today?",
+                   "choices": [{"image": "sage_fatigue0.png", "label": "ready to take on the world"},
+                               {"image": "sage_fatigue1.png", "label": "filled with energy"},
+                               {"image": "sage_fatigue2.png", "label": "energy to make it through the day"},
+                               {"image": "sage_fatigue3.png", "label": "energy to do basic functions"},
+                               {"image": "sage_fatigue4.png", "label": "no energy"}]},
+                   {"question_id": "textchoice1",
+                   "question_type": "text_choices",
+                   "question_text": "1) Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
+                   "choices": ["I never take longer than 30 minutes to fall asleep",
+                               "I take at least 30 minutes to fall asleep, less than half the time",
+                               "I take at least 30 minutes to fall asleep, more than half the time",
+                               "I take more than 60 minutes to fall asleep, more than half the time"]
+                   },
+                   {"question_id": "boolean1",
+                   "question_type": "boolean",
+                   "question_text": "Do you like chicken?",
+                   "true": "Yes",
+                   "false": "No"}
+                  ],
+    "surveys": [{"date": "2014-12-05",
+                 "ttl": 1,
+                 "questions": ["audio1", "range1", "imagechoice1", "textchoice1", "boolean1"]},
+                {"date": "2014-12-23",
+                "ttl": 1,
+                "questions": ["audio1", "range1", "imagechoice1", "textchoice1", "boolean1"]},
+                {"date": "2015-02-24",
+                "ttl": 1,
+                "questions": ["audio1", "range1", "imagechoice1", "textchoice1", "boolean1"]}
+                ]
+}

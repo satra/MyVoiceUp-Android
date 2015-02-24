@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">VoiceSurvey</string>
+    <string name="copyright">Copyright (c) 2014 MIT</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="action_settings">Settings</string>
+    <string name="total_questions_answered">Total questions answered</string>
+    <string name="num_questions">355 questions</string>
+    <string name="current_streak">Current streak</string>
+    <string name="num_days">355 days</string>
+    <string name="take_todays_survey">Take today\'s survey</string>
+    <string name="data_sync">Data Sync</string>
+    <string name="settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="slider_question">Slider Question</string>
+    <string name="onehundred">100</string>
+    <string name="zero">0</string>
+
+</resources>
