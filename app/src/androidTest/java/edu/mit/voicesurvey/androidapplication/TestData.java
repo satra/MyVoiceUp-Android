@@ -68,7 +68,7 @@ public class TestData {
         ArrayList<Survey> surveys = new ArrayList<>();
         surveys.add(getSurvey("2014-12-05"));
         surveys.add(getSurvey("2014-12-23"));
-        surveys.add(getSurvey("2015-02-24"));
+        surveys.add(getSurvey("2015-03-11"));
         return new Campaign("testios","MIT Voice and Depression study team", surveys);
     }
 }

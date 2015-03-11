@@ -18,5 +18,7 @@
     <string name="slider_question">Slider Question</string>
     <string name="onehundred">100</string>
     <string name="zero">0</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

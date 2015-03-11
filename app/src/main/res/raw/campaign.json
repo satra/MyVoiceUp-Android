@@ -12,7 +12,7 @@
                    "question_text": "Sample audio recording test"},
                    {"question_id": "range1",
                    "question_type": "range",
-                   "question_text": "Slider Question",
+                   "question_text": "Sample Slider Question",
                    "range_min": 10,
                    "range_max": 20,
                    "range_step": 1
@@ -45,7 +45,7 @@
                 {"date": "2014-12-23",
                 "ttl": 1,
                 "questions": ["audio1", "range1", "imagechoice1", "textchoice1", "boolean1"]},
-                {"date": "2015-02-24",
+                {"date": "2015-03-11",
                 "ttl": 1,
                 "questions": ["audio1", "range1", "imagechoice1", "textchoice1", "boolean1"]}
                 ]

@@ -1,6 +1,5 @@
 package edu.mit.voicesurvey.androidapplication.model;
 
-import android.content.Context;
 import android.util.JsonReader;
 import android.util.Pair;
 
@@ -19,15 +18,13 @@ import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QTextChoice;
 
 /**
  * Created by Ashley on 2/22/2015.
+ * TODO: update to use new JSON format
  */
 public class JsonParser {
 
     public static Campaign parseCampaign(DataHolder dataHolder) {
         try {
-           // InputStream ins = context.getResources().openRawResource(
-             //       context.getResources().getIdentifier("campaign",
-               //             "raw", context.getPackageName()));
-            String file = "res/raw/campaign.json"; // res/raw/test.txt also work.
+            String file = "res/raw/campaign.json";
             InputStream in = dataHolder.getClass().getClassLoader().getResourceAsStream(file);
             JsonReader jsonReader = new JsonReader(new InputStreamReader(in));
 

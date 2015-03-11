@@ -10,6 +10,9 @@ import edu.mit.voicesurvey.androidapplication.R;
 import edu.mit.voicesurvey.androidapplication.model.DataHolder;
 
 
+/**
+ * The landing page of the application
+ */
 public class HomeActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,5 @@ public class HomeActivity extends ActionBarActivity {
     public void startSurvey(View view) {
         Intent i = new Intent(HomeActivity.this, SurveyActivity.class);
         startActivity(i);
-        finish();
     }
 }

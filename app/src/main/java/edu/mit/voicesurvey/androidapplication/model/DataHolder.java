@@ -23,6 +23,11 @@ public class DataHolder {
         return holder;
     }
 
+    /**
+     * Finds the survey to be answered today
+     * TODO: update this to handle skipping questions and surveys
+     * @return
+     */
     public Survey getTodaysSurvey() {
         Calendar today = Calendar.getInstance();
         today.setTime(new Date());

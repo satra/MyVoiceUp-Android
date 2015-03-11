@@ -13,8 +13,6 @@ public class Campaign {
 
     private ArrayList<Survey> surveys;
 
-    //var sink sinksetup????
-
     public Campaign (String id, String author, ArrayList<Survey> surveys) {
         this.id = id;
         this.author = author;

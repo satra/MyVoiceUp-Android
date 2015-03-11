@@ -7,16 +7,30 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
+import java.util.ArrayList;
+
 import edu.mit.voicesurvey.androidapplication.R;
+import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QAudioFragment;
+import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QBooleanFragment;
+import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QImgChoiceFragment;
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QRangeFragment;
+import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QTextChoiceFragment;
+import edu.mit.voicesurvey.androidapplication.model.DataHolder;
+import edu.mit.voicesurvey.androidapplication.model.Question;
+import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QAudioRecording;
+import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QBoolChoice;
+import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QImgChoice;
+import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QRange;
+import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QTextChoice;
+import edu.mit.voicesurvey.androidapplication.model.Survey;
 
 
 public class SurveyActivity extends ActionBarActivity {
 
-    // TODO given a list of questions, instantiate the correct fragments
     // TODO allow users to click next and back to go between questions
     // TODO when the user switches fragments, record their response to the question
     // TODO add progress bar to the top of the page
+    // TODO end survey action
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -33,11 +47,35 @@ public class SurveyActivity extends ActionBarActivity {
      */
     ViewPager mViewPager;
 
+    Survey survey;
+    ArrayList<Fragment> fragments;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey);
 
+        survey = DataHolder.getInstance().getTodaysSurvey();
+        if (survey == null) {
+            finish();
+        }
+
+        fragments = new ArrayList<>();
+        for (Question question : survey.getQuestions()) {
+            Fragment fragment;
+            if (question instanceof QAudioRecording) {
+                fragment = QAudioFragment.newInstance(question);
+            } else if (question instanceof QBoolChoice) {
+                fragment = QBooleanFragment.newInstance(question);
+            } else if (question instanceof QImgChoice) {
+                fragment = QImgChoiceFragment.newInstance(question);
+            } else if (question instanceof QRange) {
+                fragment = QRangeFragment.newInstance(question);
+            } else {
+                fragment = QTextChoiceFragment.newInstance(question);
+            }
+            fragments.add(fragment);
+        }
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -61,16 +99,12 @@ public class SurveyActivity extends ActionBarActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // TODO return correct fragment based on position
-            return QRangeFragment.newInstance(position + 1);
+            return fragments.get(position);
         }
 
         @Override
         public int getCount() {
-            // TODO return number of questions in survey
-            // Show 3 total pages.
-            return 3;
+            return survey.getQuestions().size();
         }
 
     }

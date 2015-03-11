@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sample audio recording test" />
+        android:id="@+id/question_text_audio_fragment"/>
 
     <ProgressBar
         android:layout_width="match_parent"
@@ -19,20 +19,38 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_mic_2"  />
+            android:src="@drawable/ic_action_mic_2"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/record_button"/>
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_play_2" />
+            android:src="@drawable/ic_action_play_2"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/play_button"/>
         <ImageButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_rewind_2" />
+            android:src="@drawable/ic_action_rewind_2"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/rewind_button"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0:00"/>
+            android:text="0:00"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center_horizontal"
+            android:id="@+id/time_text_view"/>
     </LinearLayout>
 </LinearLayout>
