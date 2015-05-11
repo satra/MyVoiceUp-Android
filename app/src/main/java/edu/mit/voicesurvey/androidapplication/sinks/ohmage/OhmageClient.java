@@ -1,13 +1,22 @@
 package edu.mit.voicesurvey.androidapplication.sinks.ohmage;
 
+import android.os.Environment;
+
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.http.Multipart;
 import retrofit.http.POST;
+import retrofit.http.Part;
+import retrofit.http.PartMap;
 import retrofit.http.Query;
+import retrofit.mime.TypedFile;
 
 public class OhmageClient {
     public static final String CLIENT = "ohmage-android";
@@ -101,20 +110,34 @@ public class OhmageClient {
         }
     }
 
-   /* public void uploadFile(String localFile, String repo) {
-        if (!working) {
-            init();
-            working = true;
-        }
-    }*/
-
-    public static void uploadSurvey(String campaign, String date, String responses, AsyncResponse caller) {
+    public static void uploadSurvey(String campaign, String date, String responses, AsyncResponse caller, String audioFileUUID1, String audioFileUUID2) {
         if (!isWorking) {
             isWorking = true;
             init();
             delegate = caller;
-            ohmage.uploadSurvey(authToken, CLIENT, campaign, date, responses, uploadSurveyCallback);
+
+            TypedFile file1 = getAudioFile(audioFileUUID1);
+            TypedFile file2 = getAudioFile(audioFileUUID2);
+
+            Map<String, TypedFile> mapping = new HashMap<>();
+            if (file1 != null) {
+                mapping.put(audioFileUUID1, file1);
+            }
+            if (file2 != null) {
+                mapping.put(audioFileUUID2, file2);
+            }
+
+            ohmage.uploadSurvey(mapping, authToken, CLIENT, campaign, date, responses, uploadSurveyCallback);
         }
+    }
+    private static TypedFile getAudioFile(String audioFileUUID) {
+        if (audioFileUUID != null) {
+            String fileName = Environment.getExternalStorageDirectory().getAbsolutePath();
+            fileName += "/"+audioFileUUID+".3gpp";
+            File file = new File(fileName);
+            return new TypedFile("audio/3gpp", file);
+        }
+        return null;
     }
 
     public static void resetPassword(String username, String email, AsyncResponse caller) {
@@ -151,13 +174,15 @@ public class OhmageClient {
                 Callback<CommonResponse> response
         );
 
+        @Multipart
         @POST("/app/survey/upload")
         void uploadSurvey(
-                @Query("auth_token") String authToken,
-                @Query("client") String client,
-                @Query("campaign_urn") String campaignURN,
-                @Query("campaign_creation_timestamp") String creationTimestamp,
-                @Query("surveys") String surveys,
+                @PartMap Map<String, TypedFile> audioFiles,
+                @Part("auth_token") String authToken,
+                @Part("client") String client,
+                @Part("campaign_urn") String campaignURN,
+                @Part("campaign_creation_timestamp") String creationTimestamp,
+                @Part("surveys") String surveys,
                 Callback<CommonResponse> response
         );
     }

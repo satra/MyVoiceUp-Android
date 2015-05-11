@@ -25,7 +25,7 @@ import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QAudioRecordin
  * A simple fragment that displays an audio question.
  */
 public class QAudioFragment extends Fragment {
-    private static String mFileName = null;
+    private String mFileName = null;
     private QAudioRecording question;
     private TextView timeTextView;
     private ProgressBar progressBar;
@@ -63,7 +63,8 @@ public class QAudioFragment extends Fragment {
         progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
 
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp";
+        String uuid = question.getUUID();
+        mFileName += "/"+uuid+".3gpp";
 
         ImageButton recordButton = (ImageButton) rootView.findViewById(R.id.record_button);
         ImageButton playButton = (ImageButton) rootView.findViewById(R.id.play_button);
@@ -193,15 +194,14 @@ public class QAudioFragment extends Fragment {
 
         try {
             mRecorder.prepare();
+            mRecorder.start();
+            progressBar.setIndeterminate(true);
+            progressBar.setProgress(0);
+            timeTextView.setText(millisecondsToString(0));
+            handler.postDelayed(recordTimer, 1000);
         } catch (IOException e) {
             recording = false;
         }
-
-        mRecorder.start();
-        progressBar.setIndeterminate(true);
-        progressBar.setProgress(0);
-        timeTextView.setText(millisecondsToString(0));
-        handler.postDelayed(recordTimer, 1000);
     }
 
     /**
@@ -215,6 +215,7 @@ public class QAudioFragment extends Fragment {
         mRecorder = null;
         progressBar.setIndeterminate(false);
         progressBar.setMax(recordTime);
+        question.recorded = true;
     }
 
     /**

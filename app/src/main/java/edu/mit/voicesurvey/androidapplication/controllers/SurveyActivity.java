@@ -152,7 +152,7 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse{
                 String campaignURN = CampaignInformation.campaign.getCampaignURN();
                 String campaignCreationTimestamp = CampaignInformation.campaign.getCampaignCreationTimestamp();
                 next.setEnabled(false);
-                OhmageClient.uploadSurvey(campaignURN, campaignCreationTimestamp, array.toString(), this);
+                OhmageClient.uploadSurvey(campaignURN, campaignCreationTimestamp, array.toString(), this, survey.getAudioUUID1(), survey.getAudioUUID2());
             } catch (JSONException e) {
                 e.printStackTrace();
             }

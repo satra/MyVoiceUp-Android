@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QAudioRecording;
+
 public class Survey {
     private String uniqueId;
     private String id;
@@ -50,8 +52,8 @@ public class Survey {
             if (i < 9) {
                 number += "0";
             }
-            number += (i+1);
-            String id = "iPromptNumericId" + q.getId() + "_" + q.getPromptId() + "_iSurvey0" + date + "_iPrompt"+number;
+            number += (i + 1);
+            String id = "iPromptNumericId" + q.getId() + "_" + q.getPromptId() + "_iSurvey0" + date + "_iPrompt" + number;
             response.put("prompt_id", id);
             if (q.getAnswer() == null) {
                 response.put("value", "SKIPPED");
@@ -61,5 +63,33 @@ public class Survey {
             responses.put(response);
         }
         return survey;
+    }
+
+    public String getAudioUUID1() {
+        for (int i = 0; i < questions.size(); i++) {
+            Question q = questions.get(i);
+            if (q instanceof QAudioRecording) {
+                if (((QAudioRecording) q).recorded) {
+                    return ((QAudioRecording) q).getUUID();
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getAudioUUID2() {
+        boolean found1 = false;
+        for (int i = 0; i < questions.size(); i++) {
+            Question q = questions.get(i);
+            if (q instanceof QAudioRecording) {
+                if (((QAudioRecording) q).recorded) {
+                    if (found1)
+                        return ((QAudioRecording) q).getUUID();
+                    else
+                        found1 = true;
+                }
+            }
+        }
+        return null;
     }
 }

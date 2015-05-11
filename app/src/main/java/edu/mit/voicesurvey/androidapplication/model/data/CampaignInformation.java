@@ -51,7 +51,7 @@ public class CampaignInformation {
 
     public static void parseCampaign(Context context) {
         try {
-            InputStream in = context.getResources().openRawResource(R.raw.campaign); // TODO: download campaign.json from https://drive.google.com/file/d/0Bw6980FXz8G3cElEV204YmlHbkE/view?usp=sharing
+            InputStream in = context.getResources().openRawResource(R.raw.campaign); // TODO: download campaign.json from https://voicesurvey.mit.edu/sites/default/files/documents/campaign.json
 
             JsonReader jsonReader = new JsonReader(new InputStreamReader(in));
 
