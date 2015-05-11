@@ -1,7 +1,7 @@
 package edu.mit.voicesurvey.androidapplication.controllers.surveyfragments;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +20,6 @@ import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QImgChoice;
  */
 public class QImgChoiceFragment extends Fragment {
     private QImgChoice question;
-    private View rootView;
 
     /**
      * Returns a new instance of this fragment for the given question.
@@ -37,7 +36,7 @@ public class QImgChoiceFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_qimgchoice, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_qimgchoice, container, false);
         TextView textView = (TextView) rootView.findViewById(R.id.question_text_img_choice_fragment);
         textView.setText(question.getQuestionText());
 

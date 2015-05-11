@@ -2,19 +2,16 @@ package edu.mit.voicesurvey.androidapplication.model.QuestionTypes;
 
 import edu.mit.voicesurvey.androidapplication.model.Question;
 
-/**
- * Created by Ashley on 2/22/2015.
- */
 public class QBoolChoice extends Question {
     public static final String TRUE_CHOICE = "Yes";
     public static final String FALSE_CHOICE = "No";
 
-    public QBoolChoice(String id, String questionText, boolean skippable){
-        super(id, questionText, skippable);
+    public QBoolChoice(String promptId, String id, String questionText){
+        super(promptId, id, questionText);
     }
 
     @Override
-    public boolean equals(Object other) {
-        return super.equals(other) && other instanceof QBoolChoice;
+    public String getAnswer() {
+        return null;
     }
 }

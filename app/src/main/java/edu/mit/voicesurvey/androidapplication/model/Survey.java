@@ -1,53 +1,65 @@
 package edu.mit.voicesurvey.androidapplication.model;
 
-import android.location.Location;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.UUID;
 
-/**
- * Created by Ashley on 2/22/2015.
- */
 public class Survey {
-    private int id;
-    private Date date;
-    private String author;
+    private String uniqueId;
+    private String id;
+    private String date;
     private ArrayList<Question> questions;
 
-    public Survey(int id, Date date, String author, ArrayList<Question> questions) {
+    public Survey(String id, String date, ArrayList<Question> questions) {
         this.id = id;
         this.date = date;
-        this.author = author;
         this.questions = questions;
+        this.uniqueId = UUID.randomUUID().toString();
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public Date getDate() {
+    public String getDate() {
         return date;
-    }
-
-    public String getAuthor() {
-        return author;
     }
 
     public ArrayList<Question> getQuestions() {
         return questions;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Survey) || ((Survey) other).getQuestions().size() != questions.size() ) {
-            return false;
-        }
+    public JSONObject getSurveyForUpload() throws JSONException {
+        long time = System.currentTimeMillis();
+        JSONObject survey = new JSONObject();
+        survey.put("survey_key", uniqueId);
+        survey.put("time", time);
+        survey.put("timezone", "GMT");
+        survey.put("location_status", "unavailable");
+        JSONObject surveyLaunchContext = new JSONObject();
+        surveyLaunchContext.put("launch_time", time);
+        surveyLaunchContext.put("launch_timezone", "GMT");
+        surveyLaunchContext.put("active_triggers", new JSONArray());
+        survey.put("survey_launch_context", surveyLaunchContext);
+        survey.put("survey_id", id);
+        JSONArray responses = new JSONArray();
+        survey.put("responses", responses);
         for (int i = 0; i < questions.size(); i++) {
-            if (!((Survey) other).getQuestions().get(i).equals(questions.get(i))) {
-                return false;
+            Question q = questions.get(i);
+            JSONObject response = new JSONObject();
+            String number = "0";
+            if (i < 9) {
+                number += "0";
             }
+            number += (i+1);
+            String id = "iPromptNumericId" + q.getId() + "_" + q.getPromptId() + "_iSurvey0" + date + "_iPrompt"+number;
+            response.put("prompt_id", id);
+            if (q.getAnswer() == null) {
+                response.put("value", "SKIPPED");
+            } else {
+                response.put("value", q.getAnswer());
+            }
+            responses.put(response);
         }
-        return ((Survey)other).getId()==id && ((Survey) other).getDate().equals(date) && ((Survey) other).getAuthor().equals(author);
+        return survey;
     }
-
 }

@@ -6,14 +6,11 @@ import java.util.ArrayList;
 
 import edu.mit.voicesurvey.androidapplication.model.Question;
 
-/**
- * Created by Ashley on 2/22/2015.
- */
 public class QImgChoice extends Question {
     private ArrayList<Pair<String, String>> choices;
 
-    public QImgChoice(String id, String questionText, boolean skippable, ArrayList<Pair<String, String>> choices) {
-        super(id, questionText, skippable);
+    public QImgChoice(String promptId, String id, String questionText, ArrayList<Pair<String, String>> choices) {
+        super(promptId, id, questionText);
         this.choices = choices;
     }
 
@@ -22,15 +19,7 @@ public class QImgChoice extends Question {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (!(super.equals(other) && other instanceof QImgChoice) || ((QImgChoice) other).getChoices().size() != choices.size()) {
-            return false;
-        }
-        for (int i = 0; i < choices.size(); i++) {
-            if (!((QImgChoice) other).getChoices().get(i).equals(choices.get(i))) {
-                return false;
-            }
-        }
-        return true;
+    public String getAnswer() {
+        return null;
     }
 }

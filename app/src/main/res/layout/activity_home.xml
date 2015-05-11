@@ -24,18 +24,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:text="@string/num_questions" />
+            android:id="@+id/total_answered"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/current_streak" />
+            android:text="@string/current_streak"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
-            android:text="@string/num_days" />
+            android:id="@+id/current_streak"/>
 
         <Button
             android:layout_width="fill_parent"
@@ -44,15 +44,11 @@
             android:onClick="startSurvey"
             android:text="@string/take_todays_survey"
             android:id="@+id/todays_survey"/>
-
         <Button
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/data_sync" />
+            android:text="Depression &amp; Suicide Resources"
+            android:onClick="goToResources"/>
 
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/settings" />
     </LinearLayout>
 </ScrollView>

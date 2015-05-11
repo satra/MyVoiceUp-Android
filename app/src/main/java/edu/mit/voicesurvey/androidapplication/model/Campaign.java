@@ -1,44 +1,25 @@
 package edu.mit.voicesurvey.androidapplication.model;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- * Created by Ashley on 2/22/2015.
- */
 public class Campaign {
-    private String id;
-    private String author;
-
+    private String campaignURN;
+    private String campaignCreationTimestamp;
     private ArrayList<Survey> surveys;
 
-    public Campaign (String id, String author, ArrayList<Survey> surveys) {
-        this.id = id;
-        this.author = author;
+    public Campaign (String campaignURN, String campaignCreationTimestamp, ArrayList<Survey> surveys) {
+        this.campaignURN = campaignURN;
+        this.campaignCreationTimestamp = campaignCreationTimestamp;
         this.surveys = surveys;
     }
 
-    public String getId() {
-        return id;
+    public String getCampaignURN() {
+        return campaignURN;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getCampaignCreationTimestamp() {
+        return campaignCreationTimestamp;
     }
 
     public ArrayList<Survey> getSurveys() { return surveys; }
-
-    @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Campaign) || ((Campaign) other).getSurveys().size() != surveys.size()) {
-            return false;
-        }
-        for (int i=0; i < surveys.size(); i++) {
-            if (! (((Campaign) other).getSurveys().get(i).equals(surveys.get(i)))) {
-                return false;
-            }
-        }
-        return ((Campaign)other).getId().equals(id) && ((Campaign) other).getAuthor().equals(author);
-    }
 }

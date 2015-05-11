@@ -11,8 +11,10 @@
         android:id="@+id/question_text_audio_fragment"/>
 
     <ProgressBar
+        android:id="@+id/progress_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        style="@android:style/Widget.ProgressBar.Horizontal"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +27,7 @@
             android:layout_weight="1"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:id="@+id/record_button"/>
+            android:id="@+id/record_button" />
         <ImageButton
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -34,14 +36,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:id="@+id/play_button"/>
-        <ImageButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_rewind_2"
-            android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:id="@+id/rewind_button"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

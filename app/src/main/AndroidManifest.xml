@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="edu.mit.voicesurvey.androidapplication">
+    package="edu.mit.voicesurvey.androidapplication" >
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppThemeNoBar" >
         <activity
-            android:name=".controllers.SplashScreen"
+            android:name=".controllers.startup.SplashScreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,6 +27,76 @@
         <activity
             android:name=".controllers.SurveyActivity"
             android:label="@string/app_name" />
+        <activity
+            android:name=".controllers.LoginActivity"
+            android:label="@string/signin"
+            android:parentActivityName=".controllers.startup.PreviewActivity"
+            android:theme="@style/AppTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controllers.startup.PreviewActivity" />
+        </activity>
+        <activity
+            android:name=".controllers.startup.PreviewActivity"
+            android:label="@string/title_activity_preview" />
+        <activity
+            android:name=".controllers.registrationflow.EligibilityActivity"
+            android:label="@string/title_activity_eligibility"
+            android:parentActivityName=".controllers.startup.PreviewActivity"
+            android:theme="@style/AppTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controllers.startup.PreviewActivity" />
+        </activity>
+        <activity
+            android:name=".controllers.registrationflow.AccountCreationActivity"
+            android:label="@string/title_activity_account_creation"
+            android:parentActivityName=".controllers.registrationflow.ConsentActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controllers.registrationflow.ConsentActivity" />
+        </activity>
+        <activity
+            android:name=".controllers.registrationflow.ConsentActivity"
+            android:label="@string/title_activity_consent"
+            android:parentActivityName=".controllers.registrationflow.EligibilityActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controllers.registrationflow.EligibilityActivity" />
+        </activity>
+        <activity
+            android:name=".controllers.registrationflow.ConsentStepDetailActivity"
+            android:label="@string/more_information"
+            android:parentActivityName=".controllers.registrationflow.ConsentActivity"
+            android:theme="@style/AppTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controllers.registrationflow.ConsentActivity" />
+        </activity>
+
+        <service
+            android:name=".notifications.NotifyService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name=".controllers.ResourcesActivity"
+            android:label="@string/title_activity_resources"
+            android:parentActivityName=".controllers.HomeActivity"
+            android:theme="@style/AppTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.mit.voicesurvey.androidapplication.controllers.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".controllers.registrationflow.ConsentSignatureActivity"
+            android:label="@string/title_activity_consent_signature"
+            android:parentActivityName=".controllers.registrationflow.ConsentActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.mit.voicesurvey.androidapplication.controllers.registrationflow.ConsentActivity" />
+        </activity>
     </application>
 
 </manifest>

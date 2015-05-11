@@ -1,11 +1,16 @@
 package edu.mit.voicesurvey.androidapplication.controllers;
 
-import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+import android.widget.Button;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -15,22 +20,18 @@ import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QBoole
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QImgChoiceFragment;
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QRangeFragment;
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QTextChoiceFragment;
-import edu.mit.voicesurvey.androidapplication.model.DataHolder;
+import edu.mit.voicesurvey.androidapplication.model.data.CampaignInformation;
 import edu.mit.voicesurvey.androidapplication.model.Question;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QAudioRecording;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QBoolChoice;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QImgChoice;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QRange;
-import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QTextChoice;
 import edu.mit.voicesurvey.androidapplication.model.Survey;
+import edu.mit.voicesurvey.androidapplication.sinks.ohmage.AsyncResponse;
+import edu.mit.voicesurvey.androidapplication.sinks.ohmage.OhmageClient;
 
 
-public class SurveyActivity extends ActionBarActivity {
-
-    // TODO allow users to click next and back to go between questions
-    // TODO when the user switches fragments, record their response to the question
-    // TODO add progress bar to the top of the page
-    // TODO end survey action
+public class SurveyActivity extends ActionBarActivity implements AsyncResponse{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -49,13 +50,17 @@ public class SurveyActivity extends ActionBarActivity {
 
     Survey survey;
     ArrayList<Fragment> fragments;
+    Button next;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_survey);
 
-        survey = DataHolder.getInstance().getTodaysSurvey();
+        next = (Button) findViewById(R.id.next);
+
+        CampaignInformation.init(this);
+        survey = CampaignInformation.getTodaysSurvey();
         if (survey == null) {
             finish();
         }
@@ -85,6 +90,36 @@ public class SurveyActivity extends ActionBarActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                // do nothing
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == mViewPager.getAdapter().getCount() - 1) {
+                    next.setText("Submit");
+                } else if (position == mViewPager.getAdapter().getCount() - 2) {
+                    next.setText("Next");
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                // do nothing
+            }
+        });
+    }
+
+    @Override
+    public void processFinish(int method, boolean success, String error) {
+        if (success) {
+            finish();
+        } else {
+            next.setEnabled(true);
+            // TODO: display error to user
+        }
     }
 
     /**
@@ -107,5 +142,21 @@ public class SurveyActivity extends ActionBarActivity {
             return survey.getQuestions().size();
         }
 
+    }
+
+    public void nextPage(View view) {
+        if (mViewPager.getCurrentItem() == mViewPager.getAdapter().getCount()-1) {
+            try {
+                JSONArray array = new JSONArray();
+                array.put(survey.getSurveyForUpload());
+                String campaignURN = CampaignInformation.campaign.getCampaignURN();
+                String campaignCreationTimestamp = CampaignInformation.campaign.getCampaignCreationTimestamp();
+                next.setEnabled(false);
+                OhmageClient.uploadSurvey(campaignURN, campaignCreationTimestamp, array.toString(), this);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1, true);
     }
 }

@@ -4,15 +4,15 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -23,15 +23,12 @@ import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QAudioRecordin
 
 /**
  * A simple fragment that displays an audio question.
- * FIXME: I was in the process of debugging when I realized that MediaRecorder can't record wav files; working on finding a solution right now
  */
 public class QAudioFragment extends Fragment {
-    private static final String LOG_TAG = "Audio Record Fragment";
-
     private static String mFileName = null;
     private QAudioRecording question;
-    private View rootView;
     private TextView timeTextView;
+    private ProgressBar progressBar;
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
 
@@ -58,26 +55,22 @@ public class QAudioFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_qaudio, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_qaudio, container, false);
         TextView textView = (TextView) rootView.findViewById(R.id.question_text_audio_fragment);
         textView.setText(question.getQuestionText());
         timeTextView = (TextView) rootView.findViewById(R.id.time_text_view);
+
+        progressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/audiorecordtest.3gp"; //TODO: change to record wav file
+        mFileName += "/audiorecordtest.3gp";
 
         ImageButton recordButton = (ImageButton) rootView.findViewById(R.id.record_button);
-        ImageButton rewindButton = (ImageButton) rootView.findViewById(R.id.rewind_button);
         ImageButton playButton = (ImageButton) rootView.findViewById(R.id.play_button);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 record();
-            }
-        });
-
-        rewindButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                rewind();
             }
         });
 
@@ -95,7 +88,12 @@ public class QAudioFragment extends Fragment {
                 if (playing && !mPlayer.isPlaying()) {
                     play();
                 } else {
-                    handler.postDelayed(this, 1000);
+                    if (mPlayer.getCurrentPosition() > recordTime) {
+                        stopPlaying();
+                    } else {
+                        progressBar.incrementProgressBy(1000);
+                        handler.postDelayed(this, 1000);
+                    }
                 }
             }
         };
@@ -145,13 +143,6 @@ public class QAudioFragment extends Fragment {
     }
 
     /**
-     * TODO: Start playing from the beginning
-     */
-    private void rewind() {
-
-    }
-
-    /**
      * If the app is currently playing, it pauses.
      * Else, it starts playing.
      */
@@ -164,33 +155,35 @@ public class QAudioFragment extends Fragment {
      * Start playing the recorded file
      */
     private void startPlaying() {
-    /*    playing = true;
+        playing = true;
+        progressBar.setProgress(0);
         mPlayer = new MediaPlayer();
         try {
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
             mPlayer.start();
-            handler.postDelayed(playTimer, 0);
+            handler.postDelayed(playTimer, 1000);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
-        } */
+            playing = false;
+        }
     }
 
     /**
      * Stop playing the recorded file
      */
     private void stopPlaying() {
-     /*   playing = false;
+        playing = false;
         handler.removeCallbacks(playTimer);
         mPlayer.release();
-        mPlayer = null; */
+        mPlayer = null;
     }
 
     /**
      * Start recording
      */
     private void startRecording() {
-     /*   recording = true;
+        recording = true;
+        recordTime = 0;
         validateMicAvailability();
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -201,24 +194,27 @@ public class QAudioFragment extends Fragment {
         try {
             mRecorder.prepare();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+            recording = false;
         }
 
         mRecorder.start();
+        progressBar.setIndeterminate(true);
+        progressBar.setProgress(0);
         timeTextView.setText(millisecondsToString(0));
-        handler.postDelayed(recordTimer, 1000); */
+        handler.postDelayed(recordTimer, 1000);
     }
 
     /**
      * Stop recording
      */
     private void stopRecording() {
-     /*   recording = false;
+        recording = false;
         mRecorder.stop();
         handler.removeCallbacks(recordTimer);
-        recordTime = 0;
         mRecorder.release();
-        mRecorder = null; */
+        mRecorder = null;
+        progressBar.setIndeterminate(false);
+        progressBar.setMax(recordTime);
     }
 
     /**
@@ -230,14 +226,9 @@ public class QAudioFragment extends Fragment {
                         AudioFormat.CHANNEL_IN_MONO,
                         AudioFormat.ENCODING_DEFAULT, 44100);
         try {
-            if (recorder.getRecordingState() != AudioRecord.RECORDSTATE_STOPPED) {
-                Log.e(LOG_TAG, "Mic didn't successfully initialized");
-            }
-
             recorder.startRecording();
             if (recorder.getRecordingState() != AudioRecord.RECORDSTATE_RECORDING) {
                 recorder.stop();
-                Log.e(LOG_TAG, "Mic is in use and can't be accessed");
             }
             recorder.stop();
         } finally {
