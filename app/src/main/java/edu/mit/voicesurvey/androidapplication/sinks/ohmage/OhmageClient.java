@@ -1,5 +1,7 @@
 package edu.mit.voicesurvey.androidapplication.sinks.ohmage;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
 
 import java.io.File;
@@ -7,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.mit.voicesurvey.androidapplication.R;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -126,7 +129,6 @@ public class OhmageClient {
             if (file2 != null) {
                 mapping.put(audioFileUUID2, file2);
             }
-
             ohmage.uploadSurvey(mapping, authToken, CLIENT, campaign, date, responses, uploadSurveyCallback);
         }
     }

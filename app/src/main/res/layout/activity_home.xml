@@ -36,7 +36,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:id="@+id/current_streak"/>
-
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:onClick="startPastSurvey"
+            android:text="@string/take_missed_surveys"
+            android:id="@+id/past_survey"/>
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -49,6 +55,11 @@
             android:layout_height="wrap_content"
             android:text="Depression &amp; Suicide Resources"
             android:onClick="goToResources"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log out"
+            android:onClick="logout"/>
 
     </LinearLayout>
 </ScrollView>

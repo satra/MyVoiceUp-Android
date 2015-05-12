@@ -1,14 +1,17 @@
 package edu.mit.voicesurvey.androidapplication.model.data;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.JsonReader;
 import android.util.Pair;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import edu.mit.voicesurvey.androidapplication.R;
 import edu.mit.voicesurvey.androidapplication.model.Campaign;
@@ -26,14 +29,21 @@ public class CampaignInformation {
 
     /**
      * Finds the survey to be answered today
-     * TODO: update this to handle skipping questions and surveys
+     *
      * @return
      */
-    public static Survey getTodaysSurvey() {
+    public static Survey getTodaysSurvey(Context context) {
         Calendar today = Calendar.getInstance();
         String dayOfMonth = today.get(Calendar.DAY_OF_MONTH) + "";
         if (today.get(Calendar.DAY_OF_MONTH) < 10) {
-            dayOfMonth = "0"+dayOfMonth;
+            dayOfMonth = "0" + dayOfMonth;
+        }
+        GregorianCalendar todayg = new GregorianCalendar();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        String date = formatter.format(todayg.getTime());
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        if (sharedPreferences.getBoolean(date, false)) {
+            return null;
         }
 
         for (Survey s : campaign.getSurveys()) {
@@ -42,7 +52,8 @@ public class CampaignInformation {
         }
         return null;
     }
-    public static void init (Context context) {
+
+    public static void init(Context context) {
         if (!initialized) {
             parseCampaign(context);
             initialized = true;
@@ -63,7 +74,7 @@ public class CampaignInformation {
             jsonReader.beginObject();
             while (jsonReader.hasNext()) {
                 String name = jsonReader.nextName();
-                switch(name) {
+                switch (name) {
                     case "urn": {
                         campaignURN = jsonReader.nextString();
                         break;
@@ -108,7 +119,7 @@ public class CampaignInformation {
         String promptId = null;
         String type = null;
         String text = null;
-        int rangeMin =0;
+        int rangeMin = 0;
         int rangeMax = 0;
         double rangeStep = 0;
 
@@ -118,7 +129,7 @@ public class CampaignInformation {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String name = jsonReader.nextName();
-            switch(name) {
+            switch (name) {
                 case "question_id": {
                     id = jsonReader.nextString();
                     break;
@@ -197,16 +208,14 @@ public class CampaignInformation {
         return stringChoices;
     }
 
-    private static ArrayList<Pair<String,String>> parseImageChoices(JsonReader jsonReader) throws IOException
-    {
-        ArrayList<Pair<String,String>> imageChoices = new ArrayList<>();
+    private static ArrayList<Pair<String, String>> parseImageChoices(JsonReader jsonReader) throws IOException {
+        ArrayList<Pair<String, String>> imageChoices = new ArrayList<>();
         jsonReader.beginArray();
         while (jsonReader.hasNext()) {
             jsonReader.beginObject();
             String item1 = "";
             String item2 = "";
-            while (jsonReader.hasNext())
-            {
+            while (jsonReader.hasNext()) {
                 String name = jsonReader.nextName();
                 switch (name) {
                     case "image": {
@@ -244,7 +253,7 @@ public class CampaignInformation {
         jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             String name = jsonReader.nextName();
-            switch(name) {
+            switch (name) {
                 case "date": {
                     String dateStr = jsonReader.nextString();
                     date = dateStr.substring(10);
@@ -285,5 +294,34 @@ public class CampaignInformation {
         }
         jsonReader.endArray();
         return questionList;
+    }
+
+    public static Survey getMissedSurvey(Context context) {
+        GregorianCalendar todayg = new GregorianCalendar();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/");
+        String date = formatter.format(todayg.getTime());
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        int day = todayg.get(Calendar.DAY_OF_MONTH);
+        if (day > 7 && day < 11) {
+            for (Survey s : campaign.getSurveys()) {
+                if (s.getDate().equals("07")) {
+                    if (sharedPreferences.getBoolean(date + "07", false)) {
+                        return null;
+                    }
+                    return s;
+                }
+            }
+        } else if (day > 21 && day < 25) {
+            for (Survey s : campaign.getSurveys()) {
+                if (s.getDate().equals("21")) {
+                    if (sharedPreferences.getBoolean(date + "21", false)) {
+                        return null;
+                    }
+                    return s;
+                }
+            }
+        }
+        return null;
     }
 }

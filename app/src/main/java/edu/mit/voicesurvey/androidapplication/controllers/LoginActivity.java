@@ -68,8 +68,9 @@ public class LoginActivity extends ActionBarActivity implements AsyncResponse {
     public void processFinish(int method, boolean success, String error) {
         if (method == AsyncResponse.LOGIN) {
             if (success) {
-                SharedPreferences sharedPreferences = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("AUTH_TOKEN", OhmageClient.authToken);
                 editor.putString(getString(R.string.saved_username), username.getText().toString());
                 editor.putString(getString(R.string.saved_password), password.getText().toString());
                 editor.commit();

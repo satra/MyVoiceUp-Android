@@ -1,18 +1,23 @@
 package edu.mit.voicesurvey.androidapplication.controllers;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 import edu.mit.voicesurvey.androidapplication.R;
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QAudioFragment;
@@ -60,7 +65,13 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse{
         next = (Button) findViewById(R.id.next);
 
         CampaignInformation.init(this);
-        survey = CampaignInformation.getTodaysSurvey();
+        boolean pastSurvey = getIntent().getBooleanExtra("PAST", false);
+        if(pastSurvey) {
+            survey = CampaignInformation.getMissedSurvey(this);
+        }
+        else {
+            survey = CampaignInformation.getTodaysSurvey(this);
+        }
         if (survey == null) {
             finish();
         }
@@ -115,6 +126,18 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse{
     @Override
     public void processFinish(int method, boolean success, String error) {
         if (success) {
+            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
+            int numQuestions = sharedPreferences.getInt(getString(R.string.num_questions), 0) + 1;
+            int numDays = sharedPreferences.getInt(getString(R.string.num_days), 0) + 1;
+            sharedPreferences.edit().putInt(getString(R.string.num_questions),numQuestions).commit();
+            sharedPreferences.edit().putInt(getString(R.string.num_days),numDays).commit();
+            GregorianCalendar today = new GregorianCalendar();
+            SimpleDateFormat formatter=new SimpleDateFormat("yyyy/MM/dd");
+            String date = formatter.format(today.getTime());
+            sharedPreferences.edit().putString("LAST_DATE", date).commit();
+
+            sharedPreferences.edit().putBoolean(date.substring(0,8)+survey.getDate(), true).commit();
+            Log.e("test", date.substring(0,8)+survey.getDate());
             finish();
         } else {
             next.setEnabled(true);

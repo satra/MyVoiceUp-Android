@@ -55,7 +55,7 @@ public class Survey {
             number += (i + 1);
             String id = "iPromptNumericId" + q.getId() + "_" + q.getPromptId() + "_iSurvey0" + date + "_iPrompt" + number;
             response.put("prompt_id", id);
-            if (q.getAnswer() == null) {
+            if (q.getAnswer() == null || q.getAnswer().equals("0")) {
                 response.put("value", "SKIPPED");
             } else {
                 response.put("value", q.getAnswer());
