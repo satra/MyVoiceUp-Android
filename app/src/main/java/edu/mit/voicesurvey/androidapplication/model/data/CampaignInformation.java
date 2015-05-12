@@ -45,9 +45,9 @@ public class CampaignInformation {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
         String date = formatter.format(todayg.getTime());
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        /*if (sharedPreferences.getBoolean(date, false)) {
-            return null; TODO uncomment
-        }*/
+        if (sharedPreferences.getBoolean(date, false)) {
+            return null;
+        }
 
         for (Survey s : campaign.getSurveys()) {
             if (s.getDate().equals(dayOfMonth))
