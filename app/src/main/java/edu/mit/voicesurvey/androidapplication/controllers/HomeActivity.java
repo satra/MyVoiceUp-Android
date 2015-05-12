@@ -1,13 +1,18 @@
 package edu.mit.voicesurvey.androidapplication.controllers;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -17,12 +22,15 @@ import edu.mit.voicesurvey.androidapplication.controllers.startup.SplashScreen;
 import edu.mit.voicesurvey.androidapplication.model.data.CampaignInformation;
 import edu.mit.voicesurvey.androidapplication.sinks.campaign.DownloadCampaign;
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.AsyncResponse;
+import edu.mit.voicesurvey.androidapplication.sinks.ohmage.OhmageClient;
 
 
 /**
  * The landing page of the application
  */
 public class HomeActivity extends Activity implements AsyncResponse {
+    int uploadingPastSurvey = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +45,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
     }
 
     public void displayUsual() {
-        if (CampaignInformation.init(this)) {
+        if (CampaignInformation.init()) {
             if (CampaignInformation.getMissedSurvey(this) == null) {
                 Button button = (Button) findViewById(R.id.past_survey);
                 button.setVisibility(View.GONE);
@@ -72,6 +80,17 @@ public class HomeActivity extends Activity implements AsyncResponse {
             }
             totalAnswered.setText(sharedPreferences.getInt(getString(R.string.num_questions), 0) + "");
             currentStreak.setText(sharedPreferences.getInt(getString(R.string.num_days), 0) + "");
+
+            if (hasSurveysToUpload()) {
+                Button button = (Button) findViewById(R.id.upload_past);
+                button.setVisibility(View.VISIBLE);
+                if (uploadingPastSurvey > 0) {
+                    button.setClickable(false);
+                }
+            } else {
+                Button button = (Button) findViewById(R.id.upload_past);
+                button.setVisibility(View.GONE);
+            }
         } else {
             Button button1 = (Button) findViewById(R.id.past_survey);
             Button button2 = (Button) findViewById(R.id.todays_survey);
@@ -111,12 +130,54 @@ public class HomeActivity extends Activity implements AsyncResponse {
         (new DownloadCampaign()).execute(this);
     }
 
+    public void submitPastSurveys(View view) {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String surveyList = sharedPreferences.getString("SURVEY_LIST", null);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+        String[] surveyArr = gson.fromJson(surveyList, String[].class); // list of survey dates
+        for (String s : surveyArr) {
+            String campaign = sharedPreferences.getString(s+"-campaign", "");
+            String date = sharedPreferences.getString(s+"-date","");
+            String responses = sharedPreferences.getString(s+"-responses", "");
+            String audioFileUUID1 = sharedPreferences.getString(s+"-audioFileUUID1", null);
+            String audioFileUUID2 = sharedPreferences.getString(s+"-audioFileUUID2", null);
+            uploadingPastSurvey ++;
+            OhmageClient.uploadSurvey(campaign, date, responses, this, audioFileUUID1, audioFileUUID2);
+        }
+    }
+
+    private boolean hasSurveysToUpload() {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        String surveyList = sharedPreferences.getString("SURVEY_LIST", null);
+        return surveyList != null;
+    }
+
     @Override
     public void processFinish(int method, boolean success, String error) {
         if (method == AsyncResponse.DOWNLOAD_CAMPAIGN) {
             if (success) {
                 displayUsual();
             }
+        } else if (method == AsyncResponse.UPLOAD_SURVEY) {
+            uploadingPastSurvey --;
+            Button button = (Button) findViewById(R.id.upload_past);
+            button.setClickable(true);
+            if (!success) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(error);
+                builder.setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // close dialog
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            } else {
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                sharedPreferences.edit().putString("SURVEY_LIST", null).commit();
+            }
+            displayUsual();
         }
     }
 }

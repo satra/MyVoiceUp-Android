@@ -45,9 +45,9 @@ public class CampaignInformation {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
         String date = formatter.format(todayg.getTime());
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        if (sharedPreferences.getBoolean(date, false)) {
-            return null;
-        }
+        /*if (sharedPreferences.getBoolean(date, false)) {
+            return null; TODO uncomment
+        }*/
 
         for (Survey s : campaign.getSurveys()) {
             if (s.getDate().equals(dayOfMonth))
@@ -56,9 +56,9 @@ public class CampaignInformation {
         return null;
     }
 
-    public static boolean init(Context context) {
+    public static boolean init() {
         if (!initialized) {
-            if (parseCampaign(context)) {
+            if (parseCampaign()) {
                 initialized = true;
                 return true;
             }
@@ -66,7 +66,7 @@ public class CampaignInformation {
         return true;
     }
 
-    public static boolean parseCampaign(Context context) {
+    public static boolean parseCampaign() {
         GregorianCalendar today = new GregorianCalendar();
         int year = today.get(Calendar.YEAR);
         int month = today.get(Calendar.MONTH);

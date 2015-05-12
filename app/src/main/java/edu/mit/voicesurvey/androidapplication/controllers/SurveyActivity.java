@@ -1,6 +1,8 @@
 package edu.mit.voicesurvey.androidapplication.controllers;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,16 +10,20 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import edu.mit.voicesurvey.androidapplication.R;
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QAudioFragment;
@@ -25,18 +31,18 @@ import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QBoole
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QImgChoiceFragment;
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QRangeFragment;
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QTextChoiceFragment;
-import edu.mit.voicesurvey.androidapplication.model.data.CampaignInformation;
 import edu.mit.voicesurvey.androidapplication.model.Question;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QAudioRecording;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QBoolChoice;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QImgChoice;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QRange;
 import edu.mit.voicesurvey.androidapplication.model.Survey;
+import edu.mit.voicesurvey.androidapplication.model.data.CampaignInformation;
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.AsyncResponse;
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.OhmageClient;
 
 
-public class SurveyActivity extends ActionBarActivity implements AsyncResponse{
+public class SurveyActivity extends ActionBarActivity implements AsyncResponse {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -64,12 +70,11 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse{
 
         next = (Button) findViewById(R.id.next);
 
-        CampaignInformation.init(this);
+        CampaignInformation.init();
         boolean pastSurvey = getIntent().getBooleanExtra("PAST", false);
-        if(pastSurvey) {
+        if (pastSurvey) {
             survey = CampaignInformation.getMissedSurvey(this);
-        }
-        else {
+        } else {
             survey = CampaignInformation.getTodaysSurvey(this);
         }
         if (survey == null) {
@@ -125,24 +130,85 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse{
 
     @Override
     public void processFinish(int method, boolean success, String error) {
-        if (success) {
-            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key),Context.MODE_PRIVATE);
-            int numQuestions = sharedPreferences.getInt(getString(R.string.num_questions), 0) + 1;
-            int numDays = sharedPreferences.getInt(getString(R.string.num_days), 0) + 1;
-            sharedPreferences.edit().putInt(getString(R.string.num_questions),numQuestions).commit();
-            sharedPreferences.edit().putInt(getString(R.string.num_days),numDays).commit();
+        if (method == AsyncResponse.UPLOAD_SURVEY) {
             GregorianCalendar today = new GregorianCalendar();
-            SimpleDateFormat formatter=new SimpleDateFormat("yyyy/MM/dd");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
             String date = formatter.format(today.getTime());
-            sharedPreferences.edit().putString("LAST_DATE", date).commit();
+            if (success || error.equals("No internet")) {
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                int numQuestions = sharedPreferences.getInt(getString(R.string.num_questions), 0) + 1;
+                int numDays = sharedPreferences.getInt(getString(R.string.num_days), 0) + 1;
+                sharedPreferences.edit().putInt(getString(R.string.num_questions), numQuestions).commit();
+                sharedPreferences.edit().putInt(getString(R.string.num_days), numDays).commit();
+                sharedPreferences.edit().putString("LAST_DATE", date).commit();
+                sharedPreferences.edit().putBoolean(date.substring(0, 8) + survey.getDate(), true).commit();
+                finish();
+            }
+            if (!success) {
+                next.setEnabled(true);
+                if (error.equals("No internet")) {
+                    error = "No internet. Will save survey for later submission";
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(error);
+                builder.setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // close dialog
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
 
-            sharedPreferences.edit().putBoolean(date.substring(0,8)+survey.getDate(), true).commit();
-            Log.e("test", date.substring(0,8)+survey.getDate());
-            finish();
-        } else {
-            next.setEnabled(true);
-            // TODO: display error to user
+                String date1 = date.substring(0, 8) + survey.getDate();
+                try {
+                    JSONArray array = new JSONArray();
+                    array.put(survey.getSurveyForUpload());
+                    String campaignURN = CampaignInformation.campaign.getCampaignURN();
+                    String campaignCreationTimestamp = CampaignInformation.campaign.getCampaignCreationTimestamp();
+                    String responses = array.toString();
+                    String audioUUID1 = survey.getAudioUUID1();
+                    String audioUUID2 = survey.getAudioUUID2();
+                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(date1 + "-campaign", campaignURN);
+                    editor.putString(date1 + "-date", campaignCreationTimestamp);
+                    editor.putString(date1 + "-responses", responses);
+                    if (audioUUID1 != null)
+                        editor.putString(date1 + "-audioFileUUID1", audioUUID1);
+                    if (audioUUID2 != null)
+                        editor.putString(date1 + "-audioFileUUID2", audioUUID2);
+                    String surveyList = sharedPreferences.getString("SURVEY_LIST", "[]");
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    Gson gson = gsonBuilder.create();
+                    String[] surveyArr = gson.fromJson(surveyList, String[].class); // list of survey dates
+                    List<String> surveyList1 = new ArrayList<String>(Arrays.asList(surveyArr));
+                    surveyList1.add(date1);
+                    surveyArr = new String[surveyList1.size()];
+                    surveyArr = surveyList1.toArray(surveyArr);
+                    String value = gson.toJson(surveyArr);
+                    editor.putString("SURVEY_LIST", value);
+                    editor.commit();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+    }
+
+    public void nextPage(View view) {
+        if (mViewPager.getCurrentItem() == mViewPager.getAdapter().getCount() - 1) {
+            try {
+                JSONArray array = new JSONArray();
+                array.put(survey.getSurveyForUpload());
+                String campaignURN = CampaignInformation.campaign.getCampaignURN();
+                String campaignCreationTimestamp = CampaignInformation.campaign.getCampaignCreationTimestamp();
+                next.setEnabled(false);
+                OhmageClient.uploadSurvey(campaignURN, campaignCreationTimestamp, array.toString(), this, survey.getAudioUUID1(), survey.getAudioUUID2());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1, true);
     }
 
     /**
@@ -165,21 +231,5 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse{
             return survey.getQuestions().size();
         }
 
-    }
-
-    public void nextPage(View view) {
-        if (mViewPager.getCurrentItem() == mViewPager.getAdapter().getCount()-1) {
-            try {
-                JSONArray array = new JSONArray();
-                array.put(survey.getSurveyForUpload());
-                String campaignURN = CampaignInformation.campaign.getCampaignURN();
-                String campaignCreationTimestamp = CampaignInformation.campaign.getCampaignCreationTimestamp();
-                next.setEnabled(false);
-                OhmageClient.uploadSurvey(campaignURN, campaignCreationTimestamp, array.toString(), this, survey.getAudioUUID1(), survey.getAudioUUID2());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1, true);
     }
 }

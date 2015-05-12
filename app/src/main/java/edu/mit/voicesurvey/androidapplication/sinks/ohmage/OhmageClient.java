@@ -1,7 +1,5 @@
 package edu.mit.voicesurvey.androidapplication.sinks.ohmage;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
 
 import java.io.File;
@@ -9,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.mit.voicesurvey.androidapplication.R;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -48,7 +45,7 @@ public class OhmageClient {
         public void failure(RetrofitError retrofitError) {
             authToken = null;
             if (delegate != null) {
-                delegate.processFinish(AsyncResponse.LOGIN, false, retrofitError.toString());
+                delegate.processFinish(AsyncResponse.LOGIN, false, getError(retrofitError));
             }
             isWorking = false;
         }
@@ -70,7 +67,7 @@ public class OhmageClient {
         @Override
         public void failure(RetrofitError retrofitError) {
             if (delegate != null) {
-                delegate.processFinish(AsyncResponse.FORGOT_PASSWORD, false, retrofitError.toString());
+                delegate.processFinish(AsyncResponse.FORGOT_PASSWORD, false, getError(retrofitError));
             }
             isWorking = false;
         }
@@ -93,7 +90,7 @@ public class OhmageClient {
         @Override
         public void failure(RetrofitError retrofitError) {
             if (delegate != null) {
-                delegate.processFinish(AsyncResponse.UPLOAD_SURVEY, false, retrofitError.toString());
+                delegate.processFinish(AsyncResponse.UPLOAD_SURVEY, false, getError(retrofitError));
             }
             isWorking = false;
         }
@@ -202,5 +199,11 @@ public class OhmageClient {
     public static class CommonResponse {
         String result;
         List<Errors> errors;
+    }
+    public static String getError (RetrofitError error) {
+        if (error.toString().indexOf("Unable to resolve host") >= 0) {
+            return "No internet";
+        }
+        return error.toString();
     }
 }
