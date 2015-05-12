@@ -37,6 +37,13 @@
             android:layout_margin="15dp"
             android:id="@+id/current_streak"/>
         <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Download Surveys"
+            android:id="@+id/download_campaign"
+            android:visibility="gone"
+            android:onClick="downloadCampaign"/>
+        <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"

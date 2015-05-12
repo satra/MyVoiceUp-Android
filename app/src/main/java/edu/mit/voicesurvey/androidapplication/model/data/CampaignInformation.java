@@ -2,9 +2,12 @@ package edu.mit.voicesurvey.androidapplication.model.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.util.JsonReader;
 import android.util.Pair;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,55 +56,72 @@ public class CampaignInformation {
         return null;
     }
 
-    public static void init(Context context) {
+    public static boolean init(Context context) {
         if (!initialized) {
-            parseCampaign(context);
-            initialized = true;
+            if (parseCampaign(context)) {
+                initialized = true;
+                return true;
+            }
         }
+        return true;
     }
 
-    public static void parseCampaign(Context context) {
+    public static boolean parseCampaign(Context context) {
+        GregorianCalendar today = new GregorianCalendar();
+        int year = today.get(Calendar.YEAR);
+        int month = today.get(Calendar.MONTH);
+        String fileName = month + "-" + year + "-campaign.json";
+
         try {
-            InputStream in = context.getResources().openRawResource(R.raw.campaign); // TODO: download campaign.json from https://voicesurvey.mit.edu/sites/default/files/documents/campaign.json
+            File root = Environment.getExternalStorageDirectory();
 
-            JsonReader jsonReader = new JsonReader(new InputStreamReader(in));
+            File dir = new File(root.getAbsolutePath() + "/campaigns");
+            File file = new File(dir + "/" + fileName);
 
-            String campaignURN = "";
-            String timestamp = "";
-            ArrayList<Survey> surveys = new ArrayList<>();
-            ArrayList<Question> questions = new ArrayList<>();
+            if (file.exists()) {
+                InputStream in = new FileInputStream(file);
 
-            jsonReader.beginObject();
-            while (jsonReader.hasNext()) {
-                String name = jsonReader.nextName();
-                switch (name) {
-                    case "urn": {
-                        campaignURN = jsonReader.nextString();
-                        break;
-                    }
-                    case "timestamp": {
-                        timestamp = jsonReader.nextString();
-                        break;
-                    }
-                    case "questions": {
-                        questions = parseQuestions(jsonReader);
-                        break;
-                    }
-                    case "surveys": {
-                        surveys = parseSurveys(jsonReader, questions);
-                        break;
-                    }
-                    default: {
-                        jsonReader.skipValue();
+                JsonReader jsonReader = new JsonReader(new InputStreamReader(in));
+
+                String campaignURN = "";
+                String timestamp = "";
+                ArrayList<Survey> surveys = new ArrayList<>();
+                ArrayList<Question> questions = new ArrayList<>();
+
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    String name = jsonReader.nextName();
+                    switch (name) {
+                        case "urn": {
+                            campaignURN = jsonReader.nextString();
+                            break;
+                        }
+                        case "timestamp": {
+                            timestamp = jsonReader.nextString();
+                            break;
+                        }
+                        case "questions": {
+                            questions = parseQuestions(jsonReader);
+                            break;
+                        }
+                        case "surveys": {
+                            surveys = parseSurveys(jsonReader, questions);
+                            break;
+                        }
+                        default: {
+                            jsonReader.skipValue();
+                        }
                     }
                 }
-            }
-            jsonReader.endObject();
+                jsonReader.endObject();
 
-            campaign = new Campaign(campaignURN, timestamp, surveys);
+                campaign = new Campaign(campaignURN, timestamp, surveys);
+                return true;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     private static ArrayList<Question> parseQuestions(JsonReader jsonReader) throws IOException {
