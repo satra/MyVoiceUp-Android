@@ -92,7 +92,6 @@ public class QAudioFragment extends Fragment {
                     if (mPlayer.getCurrentPosition() > recordTime) {
                         stopPlaying();
                     } else {
-                        progressBar.incrementProgressBy(1000);
                         handler.postDelayed(this, 1000);
                     }
                 }
@@ -157,7 +156,7 @@ public class QAudioFragment extends Fragment {
      */
     private void startPlaying() {
         playing = true;
-        progressBar.setProgress(0);
+        progressBar.setIndeterminate(true);
         mPlayer = new MediaPlayer();
         try {
             mPlayer.setDataSource(mFileName);
@@ -175,6 +174,7 @@ public class QAudioFragment extends Fragment {
     private void stopPlaying() {
         playing = false;
         handler.removeCallbacks(playTimer);
+        progressBar.setIndeterminate(false);
         mPlayer.release();
         mPlayer = null;
     }
@@ -196,7 +196,6 @@ public class QAudioFragment extends Fragment {
             mRecorder.prepare();
             mRecorder.start();
             progressBar.setIndeterminate(true);
-            progressBar.setProgress(0);
             timeTextView.setText(millisecondsToString(0));
             handler.postDelayed(recordTimer, 1000);
         } catch (IOException e) {
@@ -214,7 +213,6 @@ public class QAudioFragment extends Fragment {
         mRecorder.release();
         mRecorder = null;
         progressBar.setIndeterminate(false);
-        progressBar.setMax(recordTime);
         question.recorded = true;
     }
 
