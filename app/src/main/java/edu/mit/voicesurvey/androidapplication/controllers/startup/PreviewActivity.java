@@ -40,6 +40,8 @@ public class PreviewActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         PreviewInformation.init(this);
         setContentView(R.layout.activity_preview);
+        TextView tv = (TextView) findViewById(R.id.header);
+        tv.setText(Html.fromHtml("<h1>Welcome to VoiceUp</h1> <h3>A Depression Research Study</h3>"));
 
         // Create the adapter that will return a fragment for each of the sections.
         previewSectionsPagerAdapter = new PreviewSectionsPagerAdapter(getSupportFragmentManager());
