@@ -111,7 +111,7 @@ public class ConsentActivity extends FragmentActivity {
             int id = args.getInt(ARG_SECTION_NUMBER);
             ConsentStep consentStep = ConsentInformation.consentStepList.get(id);
             ((TextView) rootView.findViewById(android.R.id.text1)).setText(consentStep.title);
-            ((TextView) rootView.findViewById(android.R.id.text2)).setText(consentStep.description);
+            ((TextView) rootView.findViewById(android.R.id.text2)).setText(Html.fromHtml(consentStep.description));
             return rootView;
         }
     }
