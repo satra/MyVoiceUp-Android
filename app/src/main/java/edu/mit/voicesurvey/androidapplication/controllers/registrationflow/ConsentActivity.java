@@ -50,6 +50,17 @@ public class ConsentActivity extends FragmentActivity {
         circlePageIndicator.setViewPager(mViewPager);
     }
 
+    /**
+     * Killed the LearnMore button, so additional info is no longer needed and that activity is not
+     * needed.  This was the layout in fragment_section_consent.xml
+     *     <Button
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:text="Learn More"
+     android:textSize="14sp"
+     android:onClick="learnMore"/>
+     * @param view
+     */
     public void learnMore(View view) {
         int i = mViewPager.getCurrentItem();
         Intent intent = new Intent(this, ConsentStepDetailActivity.class);
@@ -111,7 +122,8 @@ public class ConsentActivity extends FragmentActivity {
             int id = args.getInt(ARG_SECTION_NUMBER);
             ConsentStep consentStep = ConsentInformation.consentStepList.get(id);
             ((TextView) rootView.findViewById(android.R.id.text1)).setText(consentStep.title);
-            ((TextView) rootView.findViewById(android.R.id.text2)).setText(Html.fromHtml(consentStep.description));
+            ((TextView) rootView.findViewById(android.R.id.text2)).setText(Html.fromHtml(
+                    consentStep.description));
             return rootView;
         }
     }
@@ -123,8 +135,10 @@ public class ConsentActivity extends FragmentActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_consent_review, container, false);
-            ((TextView)rootView.findViewById(R.id.review)).setText(Html.fromHtml(ConsentInformation.fullConsentForm));
+            View rootView = inflater.inflate(R.layout.fragment_section_consent_review, container,
+                    false);
+            ((TextView)rootView.findViewById(R.id.review)).setText(Html.fromHtml(
+                    ConsentInformation.fullConsentForm));
             return rootView;
         }
     }
