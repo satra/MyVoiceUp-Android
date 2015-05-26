@@ -4,13 +4,21 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.JsonReader;
+import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
+import org.apache.http.util.ByteArrayBuffer;
+
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,7 +37,16 @@ import edu.mit.voicesurvey.androidapplication.model.Survey;
 public class CampaignInformation {
     public static Campaign campaign;
     private static boolean initialized = false;
+    private static String latestCampaignName="notLatest";
 
+    // GAC variable to hold context (aka activity from which this instance of the class was created)
+    /*
+    public CampaignInformation(Context context){
+        this.context=context;
+    }
+    */
+
+    //private Context context;
     /**
      * Finds the survey to be answered today
      *
@@ -60,23 +77,123 @@ public class CampaignInformation {
         if (!initialized) {
             if (parseCampaign()) {
                 initialized = true;
-                return true;
+                return initialized;
             }
         }
-        return true;
+        return initialized;
     }
 
-    public static boolean parseCampaign() {
+
+    // GAC Removed the "static" in order to have context be referenceable within it
+    // Context is needed to make the toast
+    public  static String parseLatestCampaignFileName(){
+        /*
+        String path = Environment.getExternalStorageDirectory().toString()+"/campaigns";
+        Log.d("Files", "Path: " + path);
+        File f = new File(path);
+        File file[] = f.listFiles();
+        Log.d("Files", "Size: "+ file.length);
+        for (int i=0; i < file.length; i++)
+        {
+            Log.d("Files", "FileName:" + file[i].getName());
+        }
+        /*
         GregorianCalendar today = new GregorianCalendar();
         int year = today.get(Calendar.YEAR);
         int month = today.get(Calendar.MONTH);
         String fileName = month + "-" + year + "-campaign.json";
-
+        */
+        String fileName = "latestCampaignFileName.json";
         try {
             File root = Environment.getExternalStorageDirectory();
 
             File dir = new File(root.getAbsolutePath() + "/campaigns");
             File file = new File(dir + "/" + fileName);
+
+            if (file.exists()) {
+                InputStream in = new FileInputStream(file);
+
+                JsonReader jsonReader = new JsonReader(new InputStreamReader(in));
+
+                jsonReader.beginObject();
+                while (jsonReader.hasNext()) {
+                    String name = jsonReader.nextName();
+                    switch (name) {
+                        case "latestCampaignFileName": {
+                            latestCampaignName = jsonReader.nextString();
+                            break;
+                        }
+                        default: {
+                            jsonReader.skipValue();
+                        }
+                    }
+                }
+                jsonReader.endObject();
+
+
+                return latestCampaignName;
+            }
+            else {
+                latestCampaignName = "No latestCampaignFileName file";
+                /*
+                //Context context = getApplicationContext();
+                CharSequence text = "Hello toast!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+                */
+                Log.e("CampaginInformation", "No latest campaign");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return latestCampaignName;
+    }
+    public static boolean parseCampaign() {
+
+        /* Assumes latest file is the one with the current name
+        However, instead, always check the web for the latest file
+        If the latest file matches the current file, then do nothing.
+        If the latest file does not match the current file, download latest
+        If no internet connectivity, proceed with whatever file may or may not be present.
+
+         */
+
+
+        //Latest json file was retrieved
+        //Now, parse that file for the latest string name
+        latestCampaignName = parseLatestCampaignFileName();
+        //latestCampaignName = "urn:campaign:MobileSurveyPrompts_20150511";
+
+        //////////////////////////////////////////////////////////////
+
+
+        /*
+        String path = Environment.getExternalStorageDirectory().toString()+"/campaigns";
+        Log.d("Files", "Path: " + path);
+        File f = new File(path);
+        File campaignList[] = f.listFiles();
+        Log.d("Files", "Size: "+ campaignList.length);
+        for (int i=0; i < campaignList.length; i++)
+        {
+            Log.d("Files", "FileName:" + campaignList[i].getName());
+            // if latest campaign does not match any of the downloaded campaigns,
+        }
+        */
+        /*
+        GregorianCalendar today = new GregorianCalendar();
+        int year = today.get(Calendar.YEAR);
+        int month = today.get(Calendar.MONTH);
+        String fileName = month + "-" + year + "-campaign.json";
+        */
+        //String fileName = latestCampaignName;
+        try {
+            File root = Environment.getExternalStorageDirectory();
+
+            File dir = new File(root.getAbsolutePath() + "/campaigns");
+            File file = new File(dir + "/" + "campaign.json");
 
             if (file.exists()) {
                 InputStream in = new FileInputStream(file);
@@ -115,8 +232,18 @@ public class CampaignInformation {
                 }
                 jsonReader.endObject();
 
-                campaign = new Campaign(campaignURN, timestamp, surveys);
-                return true;
+                // Check if the existing file is the latest file
+                // If no latestCampaignFileName file, assume that whatever campaign exists is the
+                // latest
+                if (campaignURN.equals(latestCampaignName)  |
+                        latestCampaignName.equals("No latestCampaignFileName file")){
+                    campaign = new Campaign(campaignURN, timestamp, surveys);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -321,7 +448,8 @@ public class CampaignInformation {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/");
         String date = formatter.format(todayg.getTime());
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-
+        // GAC commented out
+        /*
         int day = todayg.get(Calendar.DAY_OF_MONTH);
         if (day > 7 && day < 11) {
             for (Survey s : campaign.getSurveys()) {
@@ -342,6 +470,7 @@ public class CampaignInformation {
                 }
             }
         }
+        */
         return null;
     }
 }

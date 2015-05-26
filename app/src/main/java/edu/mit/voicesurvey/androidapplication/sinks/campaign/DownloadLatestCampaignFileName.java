@@ -17,22 +17,17 @@ import java.util.GregorianCalendar;
 
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.AsyncResponse;
 
-public class DownloadCampaign extends AsyncTask {
+public class DownloadLatestCampaignFileName extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
         boolean success = downloadFromUrl();
-        ((AsyncResponse)params[0]).processFinish(AsyncResponse.DOWNLOAD_CAMPAIGN, success, "");
+        ((AsyncResponse)params[0]).processFinish(AsyncResponse.DOWNLOAD_LATEST_CAMPAIGN_FILE_NAME, success, "");
         return null;
     }
 
     public boolean downloadFromUrl() {
-        /*
-        GregorianCalendar today = new GregorianCalendar();
-        int year = today.get(Calendar.YEAR);
-        int month = today.get(Calendar.MONTH);
-        */
-        String fileName = "campaign.json";
-        String downloadUrl = "https://voicesurvey.mit.edu/sites/default/files/documents/campaign.json";
+        String fileName = "latestCampaignFileName.json";
+        String downloadUrl = "https://voicesurvey.mit.edu/sites/default/files/documents/latestCampaignFileName.json";
         try {
             File root = Environment.getExternalStorageDirectory();
 
