@@ -39,6 +39,12 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Check for Latest Survey"
+            android:id="@+id/downloadLatestCampaignFileName"
+            android:onClick="downloadLatestCampaignFileName"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Download Surveys"
             android:id="@+id/download_campaign"
             android:visibility="gone"
