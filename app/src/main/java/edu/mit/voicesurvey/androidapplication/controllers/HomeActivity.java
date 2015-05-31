@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
@@ -88,7 +89,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
 
     public void displayUsual() {
 
-        //new DownloadFileFromURL().execute("file_url");
+
                 // This initialization doesn't do anything if already initialized.
                 // If not initialized, it parses the campaign.
                 // onCreate and onResume, poll for latest survey
@@ -106,7 +107,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
                         Button button = (Button) findViewById(R.id.past_survey);
                         button.setVisibility(View.VISIBLE);
                     }
-                    if (!CampaignInformation.parseCampaign()){ // | CampaignInformation.getTodaysSurvey(HomeActivity.this) == null) {
+                    if (!CampaignInformation.parseCampaign() | CampaignInformation.getTodaysSurvey(HomeActivity.this) == null) {
                         Button button = (Button) findViewById(R.id.todays_survey);
                         button.setEnabled(false);
                         button.setBackgroundColor(getResources().getColor(R.color.gray));
@@ -195,15 +196,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
         finish();
     }
 
-    public void downloadCampaign() {
-        (new DownloadCampaign()).execute(this);
-    }
 
-    public void downloadLatestCampaignFileName(){
-        //(new DownloadLatestCampaignFileName()).execute(this);
-        AsyncTask task = new DownloadLatestCampaignFileName().execute();
-        Log.e("Home activity", "DownloadLatestCampaignFileName");
-    }
 
     public void submitPastSurveys(View view) {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
@@ -279,8 +272,6 @@ public class HomeActivity extends Activity implements AsyncResponse {
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            //showDialog(progress_bar_type);
-
 
             pDialog = new ProgressDialog(HomeActivity.this);
             pDialog.setMessage("Downloading file. Please wait ...");
@@ -301,8 +292,9 @@ public class HomeActivity extends Activity implements AsyncResponse {
         protected String doInBackground(String... f_url) {
 
             try {
-                /*
-                URL url = new URL(f_url[0]);
+
+                //f_url[0]="https://voicesurvey.mit.edu/sites/default/files/documents/latestCampaignFileName.json";
+                URL url = new URL("https://voicesurvey.mit.edu/sites/default/files/documents/latestCampaignFileName.json");
                 URLConnection connection = url.openConnection();
                 connection.connect();
 
@@ -314,11 +306,21 @@ public class HomeActivity extends Activity implements AsyncResponse {
                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
 
                 // Output stream
-                OutputStream output = new FileOutputStream("/sdcard/downloadedfile.jpg");
+                File root = Environment.getExternalStorageDirectory();
+
+                File dir = new File (root.getAbsolutePath() + "/campaigns");
+                if(dir.exists()==false) {
+                    dir.mkdirs();
+                }
+                String fileName = "latestCampaignFileName.json";
+                File file = new File(dir, fileName);
+                OutputStream output = new FileOutputStream(file);
+
 
                 byte data[] = new byte [1024];
 
                 long total = 0;
+                int count = 0; //GAC added this
 
                 while ((count = input.read(data)) != -1) {
                     total += count;
@@ -335,20 +337,8 @@ public class HomeActivity extends Activity implements AsyncResponse {
                 // closing streams
                 output.close();
                 input.close();
-                */
 
 
-                for (int l = 0; l<=100; l++){
-
-
-                    //publishing the progress ...
-                    // After this onProgressUpdate will be called
-                    publishProgress("" + (int) (l));
-
-                    Thread.sleep(50);
-
-
-                }
 
 
             } catch (Exception e) {
@@ -375,14 +365,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
         @Override
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after the file was downloaded
-            /////dismissDialog(progress_bar_type);
             pDialog.dismiss();
-
-            //Displaying downloaded image into image view
-            // Reading image path from sdcard
-            //String imagePath = Environment.getExternalStorageDirectory().toString() + "/downloadedfile.jpg";
-            /////my_image.setImageDrawable(Drawable.createFromPath(imagePath));
-
 
             CampaignInformation.parseLatestCampaignFileName();
 
@@ -391,7 +374,8 @@ public class HomeActivity extends Activity implements AsyncResponse {
             }
             else {
                 // on post execute, parseCampaign, then displayUsual
-                new DownloadCampaignFromURL().execute("file_url");
+                String campaignURL = "https://voicesurvey.mit.edu/sites/default/files/documents/campaign.json";
+                new DownloadCampaignFromURL().execute(campaignURL);
             }
         }
 
@@ -414,8 +398,6 @@ public class HomeActivity extends Activity implements AsyncResponse {
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            //showDialog(progress_bar_type);
-
 
             pDialogCampaign = new ProgressDialog(HomeActivity.this);
             pDialogCampaign.getWindow().setGravity(Gravity.BOTTOM);
@@ -437,7 +419,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
         protected String doInBackground(String... f_url) {
 
             try {
-                /*
+
                 URL url = new URL(f_url[0]);
                 URLConnection connection = url.openConnection();
                 connection.connect();
@@ -445,16 +427,23 @@ public class HomeActivity extends Activity implements AsyncResponse {
                 //this will be useful so that you can show a typical 0-100% progress
                 int lengthOfFile = connection.getContentLength();
 
-
                 // download the file
                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
 
                 // Output stream
-                OutputStream output = new FileOutputStream("/sdcard/downloadedfile.jpg");
+                File root = Environment.getExternalStorageDirectory();
+
+                File dir = new File (root.getAbsolutePath() + "/campaigns");
+                if(dir.exists()==false) {
+                    dir.mkdirs();
+                }
+                String fileName = "campaign.json";
+                File file = new File(dir, fileName);
+                OutputStream output = new FileOutputStream(file);
 
                 byte data[] = new byte [1024];
-
                 long total = 0;
+                int count = 0; //GAC added this
 
                 while ((count = input.read(data)) != -1) {
                     total += count;
@@ -471,20 +460,6 @@ public class HomeActivity extends Activity implements AsyncResponse {
                 // closing streams
                 output.close();
                 input.close();
-                */
-
-
-                for (int l = 0; l<=100; l++){
-
-
-                    //publishing the progress ...
-                    // After this onProgressUpdate will be called
-                    publishProgress("" + (int) (l));
-
-                    Thread.sleep(50);
-
-
-                }
 
 
             } catch (Exception e) {
@@ -500,7 +475,6 @@ public class HomeActivity extends Activity implements AsyncResponse {
          */
         protected void onProgressUpdate(String ... progress) {
             // Setting progress percentage
-
             pDialogCampaign.setProgress(Integer.parseInt(progress[0]));
         }
 
@@ -513,12 +487,6 @@ public class HomeActivity extends Activity implements AsyncResponse {
             // dismiss the dialog after the file was downloaded
             /////dismissDialog(progress_bar_type);
             pDialogCampaign.dismiss();
-
-            //Displaying downloaded image into image view
-            // Reading image path from sdcard
-            //String imagePath = Environment.getExternalStorageDirectory().toString() + "/downloadedfile.jpg";
-            /////my_image.setImageDrawable(Drawable.createFromPath(imagePath));
-
 
             CampaignInformation.parseCampaign();
 
