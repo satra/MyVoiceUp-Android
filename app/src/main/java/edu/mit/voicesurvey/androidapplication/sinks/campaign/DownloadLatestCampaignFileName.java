@@ -1,7 +1,12 @@
 package edu.mit.voicesurvey.androidapplication.sinks.campaign;
 
+import android.app.Activity;
+import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.widget.Toast;
 
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -15,13 +20,60 @@ import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import edu.mit.voicesurvey.androidapplication.controllers.HomeActivity;
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.AsyncResponse;
 
-public class DownloadLatestCampaignFileName extends AsyncTask {
+public class DownloadLatestCampaignFileName extends AsyncTask<String, Void, Boolean> {
+
+    // Progress Dialog Object
+   /// private ProgressDialog prgDialog;
+    // Progress Dialog type (0 - for Horizontal progress bar)
+   /// public static final int progress_bar_type = 0;
+
+    private Activity activity;
+    /** progress dialog to show user that the backup is processing. */
+    private ProgressDialog dialog;
+    public void DownloadLatestCampaignFileName(Activity activity) {
+        this.activity = activity;
+        context = activity;
+        dialog = new ProgressDialog(context);
+    }
+    /** application context. */
+    private Context context;
+
+
+
+    protected void onPreExecute() {
+        this.dialog.setMessage("Progress start");
+        this.dialog.show();
+    }
+
+
+
+        @Override
+    protected void onPostExecute(final Boolean success) {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+
+
+        //MessageListAdapter adapter = new MessageListAdapter(activity, titles);
+        //setListAdapter(adapter);
+        //adapter.notifyDataSetChanged();
+
+
+        if (success) {
+            Toast.makeText(context, "OK", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "Error", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //protected Object doInBackground(Object[] params) {
     @Override
-    protected Object doInBackground(Object[] params) {
+    protected Boolean doInBackground(final String... args) {
         boolean success = downloadFromUrl();
-        ((AsyncResponse)params[0]).processFinish(AsyncResponse.DOWNLOAD_LATEST_CAMPAIGN_FILE_NAME, success, "");
+        //((AsyncResponse)params[0]).processFinish(AsyncResponse.DOWNLOAD_LATEST_CAMPAIGN_FILE_NAME, success, "");
         return null;
     }
 
@@ -69,4 +121,7 @@ public class DownloadLatestCampaignFileName extends AsyncTask {
         }
         return false;
     }
+
+
+
 }

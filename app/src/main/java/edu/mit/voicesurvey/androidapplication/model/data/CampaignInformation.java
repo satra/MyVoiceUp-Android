@@ -1,7 +1,9 @@
 package edu.mit.voicesurvey.androidapplication.model.data;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.JsonReader;
 import android.util.Log;
@@ -25,6 +27,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import edu.mit.voicesurvey.androidapplication.R;
+import edu.mit.voicesurvey.androidapplication.controllers.HomeActivity;
 import edu.mit.voicesurvey.androidapplication.model.Campaign;
 import edu.mit.voicesurvey.androidapplication.model.Question;
 import edu.mit.voicesurvey.androidapplication.model.QuestionTypes.QAudioRecording;
@@ -38,6 +41,7 @@ public class CampaignInformation {
     public static Campaign campaign;
     private static boolean initialized = false;
     private static String latestCampaignName="notLatest";
+    private static boolean mustDownloadCampaignFlag = false;
 
     // GAC variable to hold context (aka activity from which this instance of the class was created)
     /*
@@ -81,6 +85,10 @@ public class CampaignInformation {
             }
         }
         return initialized;
+    }
+
+    public static boolean getMustDownloadCampaignFlag(){
+        return mustDownloadCampaignFlag;
     }
 
 
@@ -131,7 +139,7 @@ public class CampaignInformation {
                 jsonReader.endObject();
 
 
-                return latestCampaignName;
+                // gac 5/30/2015, doesn't think this is necessary:  return latestCampaignName;
             }
             else {
                 latestCampaignName = "No latestCampaignFileName file";
@@ -145,13 +153,19 @@ public class CampaignInformation {
                 */
                 Log.e("CampaginInformation", "No latest campaign");
             }
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //parseCampaign();
 
         return latestCampaignName;
     }
     public static boolean parseCampaign() {
+
+        // Need this line to make sure always working with latest known state of campaign
+        parseLatestCampaignFileName();
 
         /* Assumes latest file is the one with the current name
         However, instead, always check the web for the latest file
@@ -164,7 +178,8 @@ public class CampaignInformation {
 
         //Latest json file was retrieved
         //Now, parse that file for the latest string name
-        latestCampaignName = parseLatestCampaignFileName();
+        // gac 5/30/2015 not needed if parseLatestCampaignFileName is the only function that calls parseCampaign
+        //latestCampaignName = parseLatestCampaignFileName();
         //latestCampaignName = "urn:campaign:MobileSurveyPrompts_20150511";
 
         //////////////////////////////////////////////////////////////
@@ -238,17 +253,24 @@ public class CampaignInformation {
                 if (campaignURN.equals(latestCampaignName)  |
                         latestCampaignName.equals("No latestCampaignFileName file")){
                     campaign = new Campaign(campaignURN, timestamp, surveys);
-                    return true;
+                    initialized = true;
+                    //return true;
                 }
                 else {
-                    return false;
-                }
+                    // campaign.json is not the latest, therefore async call to download campaign
+                    // then, in onPostExecute of download campaign, call parseCampaign again
+                    //new HomeActivity.DownloadFileFromURL().execute("file_url");
+                    //HomeActivity.publicStaticDownloadCampaign();
 
+                    initialized = false;
+                    //return false;
+                }
+                // Silly to have the latest check after parsing the existing file, but ok.  gac.
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return initialized; //false;
     }
 
     private static ArrayList<Question> parseQuestions(JsonReader jsonReader) throws IOException {
@@ -473,4 +495,10 @@ public class CampaignInformation {
         */
         return null;
     }
+
+
+
+
+
+
 }
