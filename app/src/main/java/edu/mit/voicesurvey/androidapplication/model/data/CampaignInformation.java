@@ -65,15 +65,24 @@ public class CampaignInformation {
         GregorianCalendar todayg = new GregorianCalendar();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
         String date = formatter.format(todayg.getTime());
+
+        // GAC:  This might be what limits a person to one survey a day, 6/1/2015
+        /*
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         if (sharedPreferences.getBoolean(date, false)) {
             return null;
         }
-
-        for (Survey s : campaign.getSurveys()) {
-            if (s.getDate().equals(dayOfMonth))
-                return s;
+        */
+        if (parseCampaign()){
+            for (Survey s : campaign.getSurveys()) {
+                if (s.getDate().equals(dayOfMonth))
+                    return s;
+            }
         }
+        else {
+            return null;
+        }
+
         return null;
     }
 

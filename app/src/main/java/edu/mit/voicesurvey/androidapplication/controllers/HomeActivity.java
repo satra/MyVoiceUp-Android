@@ -294,7 +294,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
             try {
 
                 //f_url[0]="https://voicesurvey.mit.edu/sites/default/files/documents/latestCampaignFileName.json";
-                URL url = new URL("https://voicesurvey.mit.edu/sites/default/files/documents/latestCampaignFileName.json");
+                URL url = new URL("https://voicesurvey.mit.edu/sites/default/files/documents/campaignLatestFileName.json");
                 URLConnection connection = url.openConnection();
                 connection.connect();
 
@@ -312,7 +312,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
                 if(dir.exists()==false) {
                     dir.mkdirs();
                 }
-                String fileName = "latestCampaignFileName.json";
+                String fileName = "campaignLatestFileName.json";
                 File file = new File(dir, fileName);
                 OutputStream output = new FileOutputStream(file);
 
