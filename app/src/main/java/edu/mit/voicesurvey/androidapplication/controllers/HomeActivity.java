@@ -115,9 +115,14 @@ public class HomeActivity extends Activity implements AsyncResponse {
                         Button button = (Button) findViewById(R.id.todays_survey);
                         button.setVisibility(View.VISIBLE);
                     }
+
+
+                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+                    TextView welcomeUserName = (TextView) findViewById(R.id.welcomeUserName);
+                    welcomeUserName.setText("Welcome " + sharedPreferences.getString(getString(R.string.saved_username) + "!", ""));
                     TextView totalAnswered = (TextView) findViewById(R.id.total_answered);
                     TextView currentStreak = (TextView) findViewById(R.id.current_streak);
-                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
                     String date = sharedPreferences.getString("LAST_DATE", ""); // MM/DD/YYYY
                     if (date.length() > 0) {
                         String[] dates = date.split("/");
@@ -499,7 +504,10 @@ public class HomeActivity extends Activity implements AsyncResponse {
 
 
 
-
+    //@Override
+    //public void onBackPressed(){
+    //    Toast.makeText(getApplicationContext(), "Log out to switch users", Toast.LENGTH_LONG).show();
+    //}
 
 
 
