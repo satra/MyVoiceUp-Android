@@ -62,6 +62,13 @@ public class CampaignInformation {
         if (today.get(Calendar.DAY_OF_MONTH) < 10) {
             dayOfMonth = "0" + dayOfMonth;
         }
+
+        //If first time user, default to day 7 which is the PHQ-9
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        if (sharedPreferences.getInt(context.getString(R.string.num_questions), 0)==0) {
+            dayOfMonth = "07";
+        }
+
         GregorianCalendar todayg = new GregorianCalendar();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
         String date = formatter.format(todayg.getTime());
