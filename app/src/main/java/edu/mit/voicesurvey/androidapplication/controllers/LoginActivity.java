@@ -29,6 +29,12 @@ public class LoginActivity extends ActionBarActivity implements AsyncResponse {
 
         username = (EditText) findViewById(R.id.login);
         password = (EditText) findViewById(R.id.password);
+
+        username.setText("test3");
+        password.setText("aaAA11!!");
+        //username = 'test3';
+        //password = "aaAA11!!";
+
         signIn = (Button) findViewById(R.id.sign_in);
         resetPassword = (Button) findViewById(R.id.reset_password);
     }
@@ -76,6 +82,10 @@ public class LoginActivity extends ActionBarActivity implements AsyncResponse {
                 editor.commit();
 
                 Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+                //GAC added so "back" from the home screen returns user to the rest of their phone
+                // Intent.FLAG_ACTIVITY_CLEAR_TASK is insuffient by itself.
+                // Need also Intent.FLAG_ACTIVITY_NEW_TASK
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
                 finish();
             } else {
