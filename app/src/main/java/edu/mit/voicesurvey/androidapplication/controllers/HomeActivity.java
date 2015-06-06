@@ -120,7 +120,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
                     SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
                     TextView welcomeUserName = (TextView) findViewById(R.id.welcomeUserName);
-                    welcomeUserName.setText("Welcome " + sharedPreferences.getString(getString(R.string.saved_username) + "!", ""));
+                    welcomeUserName.setText("Welcome " + sharedPreferences.getString(getString(R.string.saved_username), "") + "!");
                     TextView totalAnswered = (TextView) findViewById(R.id.total_answered);
                     TextView currentStreak = (TextView) findViewById(R.id.current_streak);
                     String date = sharedPreferences.getString("LAST_DATE", ""); // MM/DD/YYYY
