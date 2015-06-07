@@ -56,6 +56,19 @@ public class CampaignInformation {
      *
      * @return
      */
+
+    public static boolean doneToday(Context context){
+        GregorianCalendar todayg = new GregorianCalendar();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        String date = formatter.format(todayg.getTime());
+
+        // GAC:  This might be what limits a person to one survey a day, 6/1/2015
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        return sharedPreferences.getBoolean(date, false);
+    }
+
     public static Survey getTodaysSurvey(Context context) {
         Calendar today = Calendar.getInstance();
         String dayOfMonth = today.get(Calendar.DAY_OF_MONTH) + "";
@@ -74,12 +87,14 @@ public class CampaignInformation {
         String date = formatter.format(todayg.getTime());
 
         // GAC:  This might be what limits a person to one survey a day, 6/1/2015
+
+        //SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         /*
-        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         if (sharedPreferences.getBoolean(date, false)) {
             return null;
         }
         */
+
         if (parseCampaign()){
             for (Survey s : campaign.getSurveys()) {
                 if (s.getDate().equals(dayOfMonth))

@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -99,7 +100,12 @@ public class HomeActivity extends Activity implements AsyncResponse {
 
                 // Either no campaign.json, or out of date campaign.json
                 //if (CampaignInformation.parseCampaign()){
-
+                    /*
+                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                    GregorianCalendar todayg = new GregorianCalendar();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+                    String date = formatter.format(todayg.getTime());
+                    */
                     if (CampaignInformation.getMissedSurvey(HomeActivity.this) == null) {
                         Button button = (Button) findViewById(R.id.past_survey);
                         button.setVisibility(View.GONE);
@@ -108,14 +114,25 @@ public class HomeActivity extends Activity implements AsyncResponse {
                         button.setVisibility(View.VISIBLE);
                     }
                     if (!CampaignInformation.parseCampaign() | CampaignInformation.getTodaysSurvey(HomeActivity.this) == null) {
+                        // Survey can't be taken
                         Button button = (Button) findViewById(R.id.todays_survey);
                         button.setEnabled(false);
-                        button.setBackgroundColor(getResources().getColor(R.color.gray));
-                    } else {
+                        button.setBackgroundColor(getResources().getColor(R.color.material_blue_grey_800));
+                    }
+                    else if ( CampaignInformation.doneToday(HomeActivity.this)) {
+                        // Survey was taken
                         Button button = (Button) findViewById(R.id.todays_survey);
                         button.setVisibility(View.VISIBLE);
+                        button.setBackgroundColor(getResources().getColor(R.color.gray));
+                    }
+                    else {
+                        // Survey was not taken
+                        Button button = (Button) findViewById(R.id.todays_survey);
+                        button.setVisibility(View.VISIBLE);
+                        //button.setBackgroundColor(getResources().getColor(R.color.material_blue_grey_800));
                     }
 
+                    //
 
                     SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
