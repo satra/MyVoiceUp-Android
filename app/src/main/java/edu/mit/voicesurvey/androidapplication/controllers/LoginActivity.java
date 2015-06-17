@@ -30,8 +30,8 @@ public class LoginActivity extends ActionBarActivity implements AsyncResponse {
         username = (EditText) findViewById(R.id.login);
         password = (EditText) findViewById(R.id.password);
 
-        username.setText("test3");
-        password.setText("aaAA11!!");
+        //username.setText("test3");
+        //password.setText("aaAA11!!");
         //username = 'test3';
         //password = "aaAA11!!";
 
