@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -167,6 +169,19 @@ public class HomeActivity extends Activity implements AsyncResponse {
                         Button button = (Button) findViewById(R.id.upload_past);
                         button.setVisibility(View.GONE);
                     }
+
+                    // http://www.mysamplecode.com/2013/04/android-display-application-version.html
+                    PackageInfo pInfo = null;
+                    try {
+                        pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    TextView appVersionName = (TextView)findViewById(R.id.appVersionName);
+
+                    //in your OnCreate() method
+                    appVersionName.setText("Version: " + pInfo.versionName);
 
                 //}
 
