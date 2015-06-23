@@ -132,8 +132,8 @@ public class HomeActivity extends Activity implements AsyncResponse {
                                 .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,int id) {
                                         // if this button is clicked, close
-                                        // current activity
-                                        HomeActivity.this.finish();
+                                        // current activity.  .recreate is better than .finish
+                                        HomeActivity.this.recreate();
 
                                     }
                                 })
