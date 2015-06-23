@@ -10,7 +10,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/brain_1732b"
+        android:icon="@drawable/brain_1732bround512"
         android:label="@string/app_name"
         android:theme="@style/AppThemeNoBar" >
         <activity

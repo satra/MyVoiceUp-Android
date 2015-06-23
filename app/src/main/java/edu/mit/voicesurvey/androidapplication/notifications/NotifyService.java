@@ -48,7 +48,7 @@ public class NotifyService extends Service {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.brain_1732b)
-                        .setContentTitle("VoiceUp")
+                        .setContentTitle("MIT VoiceUp")
                         .setContentText("Complete your daily survey!")
                         .setContentIntent(contentIntent);
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
