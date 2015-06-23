@@ -127,7 +127,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
 
                         // set dialog message
                         alertDialogBuilder
-                                .setMessage("Click yes to exit, then re-launch while connected to the internet to download the latest survey!")
+                                .setMessage("Click yes to exit, then re-launch while connected to the internet to download the latest survey!  You may have to re-launch twice (sorry)")
                                 .setCancelable(false)
                                 .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,int id) {
