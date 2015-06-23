@@ -49,5 +49,6 @@
     <string name="saved_password">SAVED_PASSWORD</string>
     <string name="title_activity_consent_signature">Consent</string>
     <string name="take_missed_surveys">Take Missed Survey</string>
+    <string name="downloadUrlCampaign">https://voicesurvey.mit.edu/sites/default/files/documents/campaign.json</string>
 
 </resources>
