@@ -38,10 +38,7 @@ import java.util.GregorianCalendar;
 
 import edu.mit.voicesurvey.androidapplication.R;
 import edu.mit.voicesurvey.androidapplication.controllers.startup.SplashScreen;
-import edu.mit.voicesurvey.androidapplication.model.Campaign;
 import edu.mit.voicesurvey.androidapplication.model.data.CampaignInformation;
-import edu.mit.voicesurvey.androidapplication.sinks.campaign.DownloadCampaign;
-import edu.mit.voicesurvey.androidapplication.sinks.campaign.DownloadLatestCampaignFileName;
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.AsyncResponse;
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.OhmageClient;
 
@@ -70,7 +67,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
         // be the case.
 
         // On post execute displayUsual (even if not successful at downloading)
-        new DownloadFileFromURL().execute("file_url");
+        //new DownloadFileFromURL().execute("file_url");
 
         //Toast.makeText(this, "finished", Toast.LENGTH_SHORT);
 
@@ -86,6 +83,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
     @Override
     public void onResume() {
         super.onResume();
+        new DownloadFileFromURL().execute("file_url");
         displayUsual();
     }
 
@@ -120,6 +118,76 @@ public class HomeActivity extends Activity implements AsyncResponse {
                         Button button = (Button) findViewById(R.id.todays_survey);
                         button.setEnabled(false);
                         button.setBackgroundColor(getResources().getColor(R.color.material_blue_grey_800));
+                        //Toast.makeText(this,"Please close and reopen the app while connected to the internet to download a survey", Toast.LENGTH_LONG);
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                HomeActivity.this);
+
+                        // set title
+                        alertDialogBuilder.setTitle("No survey available!");
+
+                        // set dialog message
+                        alertDialogBuilder
+                                .setMessage("Click yes to exit, then re-launch while connected to the internet to download the latest survey!")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // if this button is clicked, close
+                                        // current activity
+                                        HomeActivity.this.finish();
+                                    }
+                                })
+                                .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // if this button is clicked, just close
+                                        // the dialog box and do nothing
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        // create alert dialog
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+
+                        // show it
+                        alertDialog.show();
+
+                        /*********************************
+                         *
+                         *
+                         *
+                         *
+                         * 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                         context);
+
+                         // set title
+                         alertDialogBuilder.setTitle("Your Title");
+
+                         // set dialog message
+                         alertDialogBuilder
+                         .setMessage("Click yes to exit!")
+                         .setCancelable(false)
+                         .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                         public void onClick(DialogInterface dialog,int id) {
+                         // if this button is clicked, close
+                         // current activity
+                         MainActivity.this.finish();
+                         }
+                         })
+                         .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                         public void onClick(DialogInterface dialog,int id) {
+                         // if this button is clicked, just close
+                         // the dialog box and do nothing
+                         dialog.cancel();
+                         }
+                         });
+
+                         // create alert dialog
+                         AlertDialog alertDialog = alertDialogBuilder.create();
+
+                         // show it
+                         alertDialog.show();
+                         */
+
+
                     }
                     else if ( CampaignInformation.doneToday(HomeActivity.this)) {
                         // Survey was taken
@@ -209,6 +277,9 @@ public class HomeActivity extends Activity implements AsyncResponse {
     }
 
     public void startSurvey(View view) {
+        // Try and download the file
+        //new DownloadFileFromURL().execute("file_url");
+
         Intent i = new Intent(HomeActivity.this, SurveyActivity.class);
         i.putExtra("PAST", false);
         startActivity(i);
@@ -411,7 +482,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
             }
             else {
                 // on post execute, parseCampaign, then displayUsual
-                String campaignURL = "https://voicesurvey.mit.edu/sites/default/files/documents/campaign.json";
+                String campaignURL = getResources().getString(R.string.downloadUrlCampaign);
                 new DownloadCampaignFromURL().execute(campaignURL);
             }
         }
