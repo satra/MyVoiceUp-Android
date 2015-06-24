@@ -51,4 +51,11 @@
     <string name="take_missed_surveys">Take Missed Survey</string>
     <string name="downloadUrlCampaign">https://voicesurvey.mit.edu/sites/default/files/documents/campaign.json</string>
 
+    <string name="gameNumRedDragon">gameNumRedDragon</string>
+    <string name="gameNumOrangeDragon">gameNumOrangeDragon</string>
+    <string name="gameNumYellowDragon">gameNumYellowDragonn</string>
+    <string name="gameNumGreenDragon">gameNumGreenDragon</string>
+    <string name="gameNumBlueDragon">gameNumBlueDragon</string>
+    <string name="gameNumVioletDragon">gameNumVioletDragon</string>
+
 </resources>

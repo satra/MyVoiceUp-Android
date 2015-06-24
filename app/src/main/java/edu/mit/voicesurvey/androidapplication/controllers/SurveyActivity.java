@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Random;
 
 import edu.mit.voicesurvey.androidapplication.R;
 import edu.mit.voicesurvey.androidapplication.controllers.surveyfragments.QAudioFragment;
@@ -142,6 +144,41 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse {
                 sharedPreferences.edit().putInt(getString(R.string.num_days), numDays).commit();
                 sharedPreferences.edit().putString("LAST_DATE", date).commit();
                 sharedPreferences.edit().putBoolean(date.substring(0, 8) + survey.getDate(), true).commit();
+
+                // Gameification update
+                int min = 0;
+                int max = 5;
+
+                Random r = new Random();
+                int i1 = r.nextInt(max - min + 1) + min;
+                switch (i1) {
+                    case 0:
+                        int gameNumRedDragon = sharedPreferences.getInt(getString(R.string.gameNumRedDragon), 0) + 1;
+                        sharedPreferences.edit().putInt(getString(R.string.gameNumRedDragon), gameNumRedDragon).commit();
+                        break;
+                    case 1:
+                        int gameNumYellowDragon = sharedPreferences.getInt(getString(R.string.gameNumYellowDragon), 0) + 1;
+                        sharedPreferences.edit().putInt(getString(R.string.gameNumYellowDragon), gameNumYellowDragon).commit();
+                        break;
+                    case 2:
+                        int gameNumOrangeDragon = sharedPreferences.getInt(getString(R.string.gameNumOrangeDragon), 0) + 1;
+                        sharedPreferences.edit().putInt(getString(R.string.gameNumOrangeDragon), gameNumOrangeDragon).commit();
+                        break;
+                    case 3:
+                        int gameNumGreenDragon = sharedPreferences.getInt(getString(R.string.gameNumGreenDragon), 0) + 1;
+                        sharedPreferences.edit().putInt(getString(R.string.gameNumGreenDragon), gameNumGreenDragon).commit();
+                        break;
+                    case 4:
+                        int gameNumBlueDragon = sharedPreferences.getInt(getString(R.string.gameNumBlueDragon), 0) + 1;
+                        sharedPreferences.edit().putInt(getString(R.string.gameNumBlueDragon), gameNumBlueDragon).commit();
+                        break;
+                    case 5:
+                        int gameNumVioletDragon = sharedPreferences.getInt(getString(R.string.gameNumVioletDragon), 0) + 1;
+                        sharedPreferences.edit().putInt(getString(R.string.gameNumVioletDragon), gameNumVioletDragon).commit();
+                        break;
+                }
+                Toast.makeText(getApplicationContext(), "Thank You!! " + Integer.toString(i1), Toast.LENGTH_LONG).show();
+                //
                 finish();
             }
             if (!success) {
@@ -195,18 +232,28 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse {
         }
     }
 
+    /**
+     * Uploads survey information when submit button of the last question of the survey is clicked
+     * @param view
+     */
     public void nextPage(View view) {
         if (mViewPager.getCurrentItem() == mViewPager.getAdapter().getCount() - 1) {
             try {
                 JSONArray array = new JSONArray();
                 array.put(survey.getSurveyForUpload());
                 String campaignURN = CampaignInformation.campaign.getCampaignURN();
-                String campaignCreationTimestamp = CampaignInformation.campaign.getCampaignCreationTimestamp();
+                String campaignCreationTimestamp =
+                        CampaignInformation.campaign.getCampaignCreationTimestamp();
                 next.setEnabled(false);
-                OhmageClient.uploadSurvey(campaignURN, campaignCreationTimestamp, array.toString(), this, survey.getAudioUUID1(), survey.getAudioUUID2());
+                OhmageClient.uploadSurvey(campaignURN, campaignCreationTimestamp, array.toString(),
+                        this, survey.getAudioUUID1(), survey.getAudioUUID2());
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
+            };
+
+            //            Toast.makeText(getApplicationContext(), "Thank You!!", Toast.LENGTH_LONG).show()
+
+
         }
         mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1, true);
     }
