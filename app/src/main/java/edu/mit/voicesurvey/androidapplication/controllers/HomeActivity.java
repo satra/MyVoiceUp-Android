@@ -118,40 +118,8 @@ public class HomeActivity extends Activity implements AsyncResponse {
                         Button button = (Button) findViewById(R.id.todays_survey);
                         button.setEnabled(false);
                         button.setBackgroundColor(getResources().getColor(R.color.material_blue_grey_800));
-                        //Toast.makeText(this,"Please close and reopen the app while connected to the internet to download a survey", Toast.LENGTH_LONG);
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                                HomeActivity.this);
-
-                        // set title
-                        alertDialogBuilder.setTitle("No survey available!");
-
-                        // set dialog message
-                        alertDialogBuilder
-                                .setMessage("Click yes to exit, then re-launch while connected to the internet to download the latest survey!  You may have to re-launch twice (sorry)")
-                                .setCancelable(false)
-                                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
-                                        // if this button is clicked, close
-                                        // current activity.  .recreate is better than .finish
-                                        HomeActivity.this.recreate();
-
-                                    }
-                                })
-                                .setNegativeButton("No",new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
-                                        // if this button is clicked, just close
-                                        // the dialog box and do nothing
-                                        dialog.cancel();
-                                    }
-                                });
-
-                        // create alert dialog
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-
-                        // show it
-                        alertDialog.show();
-
-
+                        // Alert user and give means to download survey
+                        recreateActivity();
                     }
                     else if ( CampaignInformation.doneToday(HomeActivity.this)) {
                         // Survey was taken
@@ -238,6 +206,49 @@ public class HomeActivity extends Activity implements AsyncResponse {
 
 
 
+    }
+
+    /**
+     * Create an alert dialog box that recreates the HomeActivity in order to trigger survey
+     * downloads.  This is needed for when the app is first downloaded from the internet in order
+     * to enable the "Take Today's Survey" button.  Unfortunately, it needs to be run twice due to
+     * async download operation.  The dialog also lets the user know what is wrong
+     * (why they can't take today's survey) and how to fix it.
+     */
+    private void recreateActivity() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                HomeActivity.this);
+
+        // set title
+        alertDialogBuilder.setTitle("Oh no!  No survey available!");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Click yes to exit, then re-launch while connected to the internet " +
+                        "to download the latest survey!  You may have to re-launch twice (sorry)")
+                .setCancelable(false)
+                .setPositiveButton("Yes",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, close
+                        // current activity.
+                        // .recreate is better than .finish because the user need not himself
+                        // relaunch the app.
+                        HomeActivity.this.recreate();
+                    }
+                })
+                .setNegativeButton("No",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
 
     public void startSurvey(View view) {

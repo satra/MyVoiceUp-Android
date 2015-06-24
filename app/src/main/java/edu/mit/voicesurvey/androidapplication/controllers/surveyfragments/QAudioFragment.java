@@ -71,7 +71,7 @@ public class QAudioFragment extends Fragment {
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                record();
+                record(v);
             }
         });
 
@@ -137,9 +137,15 @@ public class QAudioFragment extends Fragment {
      * If the app is currently recording, it stops recording.
      * Else, it starts recording.
      */
-    private void record() {
-        if (recording) stopRecording();
-        else startRecording();
+    private void record(View v) {
+        if (recording) {
+            stopRecording();
+            ((ImageButton) v).setImageResource(R.drawable.ic_action_mic_2);
+        }
+        else {
+            startRecording();
+            ((ImageButton) v).setImageResource(R.drawable.ic_action_stop);
+        }
     }
 
     /**
@@ -147,8 +153,12 @@ public class QAudioFragment extends Fragment {
      * Else, it starts playing.
      */
     private void play() {
-        if (playing) stopPlaying();
-        else startPlaying();
+        if (playing) {
+            stopPlaying();
+        }
+        else {
+            startPlaying();
+        }
     }
 
     /**
