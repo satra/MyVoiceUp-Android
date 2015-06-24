@@ -151,33 +151,41 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse {
 
                 Random r = new Random();
                 int i1 = r.nextInt(max - min + 1) + min;
+                String colorDragon="Black";
                 switch (i1) {
                     case 0:
                         int gameNumRedDragon = sharedPreferences.getInt(getString(R.string.gameNumRedDragon), 0) + 1;
                         sharedPreferences.edit().putInt(getString(R.string.gameNumRedDragon), gameNumRedDragon).commit();
+                        colorDragon="Red";
                         break;
                     case 1:
                         int gameNumYellowDragon = sharedPreferences.getInt(getString(R.string.gameNumYellowDragon), 0) + 1;
                         sharedPreferences.edit().putInt(getString(R.string.gameNumYellowDragon), gameNumYellowDragon).commit();
+                        colorDragon="Orange";
                         break;
                     case 2:
                         int gameNumOrangeDragon = sharedPreferences.getInt(getString(R.string.gameNumOrangeDragon), 0) + 1;
                         sharedPreferences.edit().putInt(getString(R.string.gameNumOrangeDragon), gameNumOrangeDragon).commit();
+                        colorDragon="Yellow";
                         break;
                     case 3:
                         int gameNumGreenDragon = sharedPreferences.getInt(getString(R.string.gameNumGreenDragon), 0) + 1;
                         sharedPreferences.edit().putInt(getString(R.string.gameNumGreenDragon), gameNumGreenDragon).commit();
+                        colorDragon="Green";
                         break;
                     case 4:
                         int gameNumBlueDragon = sharedPreferences.getInt(getString(R.string.gameNumBlueDragon), 0) + 1;
                         sharedPreferences.edit().putInt(getString(R.string.gameNumBlueDragon), gameNumBlueDragon).commit();
+                        colorDragon="Blue";
                         break;
                     case 5:
                         int gameNumVioletDragon = sharedPreferences.getInt(getString(R.string.gameNumVioletDragon), 0) + 1;
                         sharedPreferences.edit().putInt(getString(R.string.gameNumVioletDragon), gameNumVioletDragon).commit();
+                        colorDragon = "Violet";
                         break;
                 }
-                Toast.makeText(getApplicationContext(), "Thank You!! " + Integer.toString(i1), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Thank You!! " +
+                        "You earned a " + colorDragon + " dragon!", Toast.LENGTH_LONG).show();
                 //
                 finish();
             }

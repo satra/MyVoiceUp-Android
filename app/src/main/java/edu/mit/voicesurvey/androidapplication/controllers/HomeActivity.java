@@ -15,7 +15,9 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,11 +57,41 @@ public class HomeActivity extends Activity implements AsyncResponse {
     // Progress dialog type (0- for Horizontal progress bar)
     public static final int progress_bar_type = 0;
 
+    String[] itemname ={
+            "Red",
+            "Orange",
+            "Yellow",
+            "Green",
+            "Blue",
+            "Violet"
+    };
+
+    Integer[] imgid={
+            R.drawable.reddragon,
+            R.drawable.orangedragon,
+            R.drawable.yellowdragon,
+            R.drawable.greendragon,
+            R.drawable.bluedragon,
+            R.drawable.violetdragon,
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        // http://stackoverflow.com/questions/1254074/how-to-call-the-setlistadapter-in-android
+        //http://www.androidinterview.com/android-custom-listview-with-image-and-text-using-arrayadapter/
+
+        /*
+        ListView myList = (ListView)findViewById(R.id.listBadge);
+        myList.setAdapter(new ArrayAdapter<String>(
+                this, R.layout.list_home_badge,
+                R.id.Itemname,itemname));
+        */
+        CustomListAdapter adapter=new CustomListAdapter(this, itemname, imgid);
+        ListView myList=(ListView)findViewById(R.id.listBadge);
+        myList.setAdapter(adapter);
 
         // GAC:  If DownloadFileFromURL is inside displayUsual,
         // the progress dialog does not get dismissed.  This can only be because the pDialog being
@@ -182,6 +214,71 @@ public class HomeActivity extends Activity implements AsyncResponse {
 
                     //in your OnCreate() method
                     appVersionName.setText("Version: " + pInfo.versionName);
+
+
+
+                    /*
+                    ListView myList = (ListView)findViewById(R.id.listBadge);
+                    myList.setAdapter(new ArrayAdapter<String>(
+                            this, R.layout.list_home_badge,
+                            R.id.Itemname, itemname));
+                    */
+                    CustomListAdapter adapter=new CustomListAdapter(this, itemname, imgid);
+                    ListView myList=(ListView)findViewById(R.id.listBadge);
+                    myList.setAdapter(adapter);
+
+                    if (sharedPreferences.getInt(getString(R.string.gameNumRedDragon), 0) == 0) {
+                        imgid[0] = R.drawable.questionmark;
+                    }
+                    else {
+                        imgid[0] = R.drawable.reddragon;
+
+                    }
+
+                    if (sharedPreferences.getInt(getString(R.string.gameNumOrangeDragon), 0) == 0) {
+                        imgid[1] = R.drawable.questionmark;
+                    }
+                    else {
+                        imgid[1] = R.drawable.orangedragon;
+                    }
+                    if (sharedPreferences.getInt(getString(R.string.gameNumYellowDragon), 0) == 0) {
+                        imgid[2] = R.drawable.questionmark;
+                    }
+                    else {
+                        imgid[2] = R.drawable.yellowdragon;
+                    }
+                    if (sharedPreferences.getInt(getString(R.string.gameNumGreenDragon), 0) == 0) {
+                        imgid[3] = R.drawable.questionmark;
+                    }
+                    else {
+                        imgid[3] = R.drawable.greendragon;
+                    }
+                    if (sharedPreferences.getInt(getString(R.string.gameNumBlueDragon), 0) == 0) {
+                        imgid[4] = R.drawable.questionmark;
+                    }
+                    else {
+                        imgid[4] = R.drawable.bluedragon;
+                    }
+
+                    if (sharedPreferences.getInt(getString(R.string.gameNumVioletDragon), 0) == 0) {
+                        imgid[5] = R.drawable.questionmark;
+                    }
+                    else {
+                        imgid[5] = R.drawable.violetdragon;
+                    }
+
+                    itemname[0] = "Red Dragon: " +
+                            sharedPreferences.getInt(getString(R.string.gameNumRedDragon), 0);
+                    itemname[1] = "Orange Dragon: " +
+                            sharedPreferences.getInt(getString(R.string.gameNumOrangeDragon), 0);
+                    itemname[2] = "Yellow Dragon: " +
+                            sharedPreferences.getInt(getString(R.string.gameNumYellowDragon), 0);
+                    itemname[3] = "Green Dragon: " +
+                            sharedPreferences.getInt(getString(R.string.gameNumGreenDragon), 0);
+                    itemname[4] = "Blue Dragon: " +
+                            sharedPreferences.getInt(getString(R.string.gameNumBlueDragon), 0);
+                    itemname[5] = "Violet Dragon: " +
+                            sharedPreferences.getInt(getString(R.string.gameNumVioletDragon), 0);
 
                 //}
 
