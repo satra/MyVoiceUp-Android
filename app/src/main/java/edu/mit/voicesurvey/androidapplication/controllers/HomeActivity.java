@@ -232,9 +232,7 @@ public class HomeActivity extends Activity implements AsyncResponse {
                     }
                     else {
                         imgid[0] = R.drawable.reddragon;
-
                     }
-
                     if (sharedPreferences.getInt(getString(R.string.gameNumOrangeDragon), 0) == 0) {
                         imgid[1] = R.drawable.questionmark;
                     }
@@ -259,7 +257,6 @@ public class HomeActivity extends Activity implements AsyncResponse {
                     else {
                         imgid[4] = R.drawable.bluedragon;
                     }
-
                     if (sharedPreferences.getInt(getString(R.string.gameNumVioletDragon), 0) == 0) {
                         imgid[5] = R.drawable.questionmark;
                     }

@@ -20,12 +20,13 @@ import retrofit.mime.TypedFile;
 
 public class OhmageClient {
     public static final String CLIENT = "ohmage-android";
-    private static final String API_URL = "http://voiceapp.mit.edu";
+    private static final String API_URL = "https://voiceapp.mit.edu";
     public static String authToken;
     public static Ohmage ohmage;
     private static boolean isWorking = false;
     private static boolean initialized = false;
     private static AsyncResponse delegate = null; // Callback interface
+
     static Callback<Token> tokenCallback = new Callback<Token>() {
 
         @Override
@@ -110,7 +111,9 @@ public class OhmageClient {
         }
     }
 
-    public static void uploadSurvey(String campaign, String date, String responses, AsyncResponse caller, String audioFileUUID1, String audioFileUUID2) {
+    public static void uploadSurvey(String campaign, String date, String responses,
+                                    AsyncResponse caller, String audioFileUUID1,
+                                    String audioFileUUID2) {
         if (!isWorking) {
             isWorking = true;
             init();

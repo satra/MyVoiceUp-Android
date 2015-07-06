@@ -159,13 +159,13 @@ public class SurveyActivity extends ActionBarActivity implements AsyncResponse {
                         colorDragon="Red";
                         break;
                     case 1:
-                        int gameNumYellowDragon = sharedPreferences.getInt(getString(R.string.gameNumYellowDragon), 0) + 1;
-                        sharedPreferences.edit().putInt(getString(R.string.gameNumYellowDragon), gameNumYellowDragon).commit();
+                        int gameNumOrangeDragon = sharedPreferences.getInt(getString(R.string.gameNumOrangeDragon), 0) + 1;
+                        sharedPreferences.edit().putInt(getString(R.string.gameNumOrangeDragon), gameNumOrangeDragon).commit();
                         colorDragon="Orange";
                         break;
                     case 2:
-                        int gameNumOrangeDragon = sharedPreferences.getInt(getString(R.string.gameNumOrangeDragon), 0) + 1;
-                        sharedPreferences.edit().putInt(getString(R.string.gameNumOrangeDragon), gameNumOrangeDragon).commit();
+                        int gameNumYellowDragon = sharedPreferences.getInt(getString(R.string.gameNumYellowDragon), 0) + 1;
+                        sharedPreferences.edit().putInt(getString(R.string.gameNumYellowDragon), gameNumYellowDragon).commit();
                         colorDragon="Yellow";
                         break;
                     case 3:
