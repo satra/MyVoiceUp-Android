@@ -176,6 +176,7 @@ public class QTextChoiceFragment extends Fragment {
         button.setText(choice);
         params.setMargins(0, 20, 0, 20);
         button.setLayoutParams(params);
+        button.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
