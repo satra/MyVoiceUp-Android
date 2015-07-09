@@ -19,10 +19,12 @@ import edu.mit.voicesurvey.androidapplication.R;
 import edu.mit.voicesurvey.androidapplication.controllers.LoginActivity;
 import edu.mit.voicesurvey.androidapplication.controllers.registrationflow.EligibilityActivity;
 import edu.mit.voicesurvey.androidapplication.model.data.PreviewInformation;
+import edu.mit.voicesurvey.androidapplication.notifications.DailyReminderAlarmReceiver;
 
 
 public class PreviewActivity extends FragmentActivity {
 
+    //DailyReminderAlarmReceiver alarm = new DailyReminderAlarmReceiver();
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
      * sections of the preview. We use a {@link android.support.v4.app.FragmentPagerAdapter}
@@ -52,6 +54,8 @@ public class PreviewActivity extends FragmentActivity {
         mViewPager.setAdapter(previewSectionsPagerAdapter);
         CirclePageIndicator circlePageIndicator = (CirclePageIndicator) findViewById(R.id.circles);
         circlePageIndicator.setViewPager(mViewPager);
+
+        //alarm.setAlarm(this);
     }
 
     public void join(View view) {

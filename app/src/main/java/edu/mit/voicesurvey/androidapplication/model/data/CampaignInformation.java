@@ -142,7 +142,7 @@ public class CampaignInformation {
         int month = today.get(Calendar.MONTH);
         String fileName = month + "-" + year + "-campaign.json";
         */
-        String fileName = "latestCampaignFileName.json";
+        String fileName = "campaignLatestFileName.json";
         try {
             File root = Environment.getExternalStorageDirectory();
 

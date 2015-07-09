@@ -24,8 +24,9 @@ public class NotifyService extends Service {
     }
 
     public static void setAlarms(Context context) {
-        Intent intent = new Intent(context, NotifyService.class);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
+        Intent intent = new Intent(context, NotifyService.class);
+
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
         //https://developer.android.com/training/scheduling/alarms.html
         //https://developer.android.com/training/notify-user/build-notification.html
@@ -36,9 +37,13 @@ public class NotifyService extends Service {
         calendar.set(Calendar.HOUR_OF_DAY, 8); // TODO: allow users to choose if / when to be reminded
         calendar.set(Calendar.MINUTE, 5);
         //alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        /*alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
                 AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                 AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
+                */
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME,
+                0,
+                30*1000, pendingIntent);
     }
 
     @Override

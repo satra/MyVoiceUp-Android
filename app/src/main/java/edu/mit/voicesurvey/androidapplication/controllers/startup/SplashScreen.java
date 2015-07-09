@@ -10,6 +10,7 @@ import android.view.Window;
 
 import edu.mit.voicesurvey.androidapplication.R;
 import edu.mit.voicesurvey.androidapplication.controllers.HomeActivity;
+import edu.mit.voicesurvey.androidapplication.notifications.DailyReminderAlarmReceiver;
 import edu.mit.voicesurvey.androidapplication.notifications.NotifyService;
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.AsyncResponse;
 import edu.mit.voicesurvey.androidapplication.sinks.ohmage.OhmageClient;
@@ -20,6 +21,8 @@ import edu.mit.voicesurvey.androidapplication.sinks.ohmage.OhmageClient;
  */
 public class SplashScreen extends Activity implements AsyncResponse {
     Class newClass = PreviewActivity.class;
+
+    DailyReminderAlarmReceiver alarm = new DailyReminderAlarmReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +41,8 @@ public class SplashScreen extends Activity implements AsyncResponse {
                 }
             }, 4000);
         }
-        NotifyService.setAlarms(this);
+        //NotifyService.setAlarms(this); GAC commented this out for the following
+        alarm.setAlarm(this);
         setContentView(R.layout.activity_splash_screen);
     }
 
