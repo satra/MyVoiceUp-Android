@@ -96,7 +96,7 @@ public class DailyReminderAlarmReceiver extends WakefulBroadcastReceiver {
         // Set the alarm to fire at approximately 8:30 a.m., according to the device's
         // clock, and to repeat once a day.
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                calendar.getTimeInMillis(), 3600*24*1000, alarmIntent);
+                calendar.getTimeInMillis(), 24*3600*1000, alarmIntent);
         
         // Enable {@code DailyReminderBootReceiver} to automatically restart the alarm when the
         // device is rebooted.

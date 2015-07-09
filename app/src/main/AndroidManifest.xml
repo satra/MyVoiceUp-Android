@@ -78,12 +78,6 @@
                 android:value=".controllers.registrationflow.ConsentActivity" />
         </activity>
 
-        <service
-            android:name=".notifications.NotifyService"
-            android:enabled="true"
-            android:exported="true" >
-        </service>
-
         <activity
             android:name=".controllers.ResourcesActivity"
             android:label="@string/title_activity_resources"
