@@ -144,7 +144,10 @@ public class ConsentActivity extends FragmentActivity {
     }
 
     public void goToSignature(View view) {
-        Intent intent = new Intent(ConsentActivity.this, ConsentSignatureActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(ConsentActivity.this, ConsentSignatureActivity.class);
+        //startActivity(intent); // GAC commented out manually signing step and went directly to ohmage webaccount creation
+        Intent i = new Intent(ConsentActivity.this, AccountCreationActivity.class);
+        startActivity(i);
+
     }
 }

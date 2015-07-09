@@ -17,6 +17,11 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Help!"
+        android:onClick="helpDialog"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Completed Registration"
         android:onClick="signIn"/>
 
